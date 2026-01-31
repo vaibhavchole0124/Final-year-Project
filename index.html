@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Attrition Prediction</title>
+</head>
+<body>
+    <h1>Employee Attrition Prediction (Demo Form)</h1>
+
+    <form method="POST">
+        <label>Age:</label>
+        <input type="number" name="Age" value="29" required><br>
+
+        <label>BusinessTravel:</label>
+        <select name="BusinessTravel">
+            <option>Travel_Rarely</option>
+            <option>Travel_Frequently</option>
+            <option>Non-Travel</option>
+        </select><br>
+
+        <label>DailyRate:</label>
+        <input type="number" name="DailyRate" value="800" required><br>
+
+        <label>Department:</label>
+        <select name="Department">
+            <option>Research & Development</option>
+            <option>Sales</option>
+            <option>Human Resources</option>
+        </select><br>
+
+        <label>DistanceFromHome:</label>
+        <input type="number" name="DistanceFromHome" value="5" required><br>
+
+        <label>Education (1–5):</label>
+        <input type="number" name="Education" value="3" min="1" max="5" required><br>
+
+        <label>EducationField:</label>
+        <select name="EducationField">
+            <option>Life Sciences</option>
+            <option>Medical</option>
+            <option>Technical Degree</option>
+            <option>Other</option>
+        </select><br>
+
+        <label>EnvironmentSatisfaction (1–4):</label>
+        <input type="number" name="EnvironmentSatisfaction" value="3" min="1" max="4" required><br>
+
+        <label>Gender:</label>
+        <select name="Gender">
+            <option>Male</option>
+            <option>Female</option>
+        </select><br>
+
+        <label>HourlyRate:</label>
+        <input type="number" name="HourlyRate" value="70" required><br>
+
+        <label>JobInvolvement (1–4):</label>
+        <input type="number" name="JobInvolvement" value="3" min="1" max="4" required><br>
+
+        <label>JobLevel:</label>
+        <input type="number" name="JobLevel" value="2" min="1" max="5" required><br>
+
+        <label>JobRole:</label>
+        <select name="JobRole">
+            <option>Research Scientist</option>
+            <option>Sales Executive</option>
+            <option>Laboratory Technician</option>
+        </select><br>
+
+        <label>JobSatisfaction (1–4):</label>
+        <input type="number" name="JobSatisfaction" value="3" min="1" max="4" required><br>
+
+        <label>MaritalStatus:</label>
+        <select name="MaritalStatus">
+            <option>Single</option>
+            <option>Married</option>
+            <option>Divorced</option>
+        </select><br>
+
+        <label>MonthlyIncome:</label>
+        <input type="number" name="MonthlyIncome" value="5000" required><br>
+
+        <label>MonthlyRate:</label>
+        <input type="number" name="MonthlyRate" value="15000" required><br>
+
+        <label>NumCompaniesWorked:</label>
+        <input type="number" name="NumCompaniesWorked" value="2" required><br>
+
+        <label>OverTime:</label>
+        <select name="OverTime">
+            <option>Yes</option>
+            <option>No</option>
+        </select><br>
+
+        <label>PercentSalaryHike:</label>
+        <input type="number" name="PercentSalaryHike" value="13" required><br>
+
+        <label>PerformanceRating:</label>
+        <input type="number" name="PerformanceRating" value="3" required><br>
+
+        <label>RelationshipSatisfaction (1–4):</label>
+        <input type="number" name="RelationshipSatisfaction" value="3" min="1" max="4" required><br>
+
+        <label>StockOptionLevel:</label>
+        <input type="number" name="StockOptionLevel" value="1" required><br>
+
+        <label>TotalWorkingYears:</label>
+        <input type="number" name="TotalWorkingYears" value="6" required><br>
+
+        <label>TrainingTimesLastYear:</label>
+        <input type="number" name="TrainingTimesLastYear" value="3" required><br>
+
+        <label>WorkLifeBalance (1–4):</label>
+        <input type="number" name="WorkLifeBalance" value="2" min="1" max="4" required><br>
+
+        <label>YearsAtCompany:</label>
+        <input type="number" name="YearsAtCompany" value="3" required><br>
+
+        <label>YearsInCurrentRole:</label>
+        <input type="number" name="YearsInCurrentRole" value="2" required><br>
+
+        <label>YearsSinceLastPromotion:</label>
+        <input type="number" name="YearsSinceLastPromotion" value="1" required><br>
+
+        <label>YearsWithCurrManager:</label>
+        <input type="number" name="YearsWithCurrManager" value="2" required><br>
+
+        <button type="submit">Predict Attrition</button>
+    </form>
+
+    {% if prediction %}
+        {% if prediction.error %}
+            <h3>Error: {{ prediction.error }}</h3>
+        {% else %}
+            <h2>Prediction: {{ prediction.label }}</h2>
+            <p>Attrition Probability: {{ prediction.probability }}</p>
+            <p>Risk Score (0–100): {{ prediction.risk_score }}</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

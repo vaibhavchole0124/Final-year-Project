@@ -1,0 +1,66 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.env
+users.db
+users.db.bak
+*.sqbpro
+outputs/
+reports/
+models/random_forest_model.pkl
+models/preprocessor_rf.pkl
+# We might want to include models if they are needed for baking into the image, 
+# or exclude them if we mount them as volumes. 
+# For now, let's include models but exclude local data/logs.
+# Re-including models line by commenting out exclusion if they were excluded.
+# Actually, the user's current setup has models inside the repo.
+# Let's clean this up:
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# OS Files
+.DS_Store
+
+# Database (Should be mounted or external in production)
+*.db
+*.sqlite3
+
+# Local config
+.env
+
+# Output folders (Create them in container if needed)
+outputs/
+reports/

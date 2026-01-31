@@ -1,0 +1,524 @@
+/* ---------------- GLOBAL ---------------- */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: #f4f6f9;
+    color: #222;
+    margin: 0;
+}
+
+/* Generic containers */
+.page-container {
+    padding-bottom: 40px;
+}
+
+/* ---------------- NAVBAR + TOP MENU ---------------- */
+
+.navbar-custom {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+}
+
+.navbar-custom .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #111827;
+}
+
+.navbar-custom .navbar-brand i {
+    color: #2563eb;
+}
+
+.menu-btn {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: #4b5563;
+    background-color: #f9fafb;
+    transition: all 0.15s ease;
+}
+
+.menu-btn:hover {
+    background-color: #e5e7eb;
+    color: #111827;
+}
+
+.menu-btn-active {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff !important;
+}
+
+/* ---------------- CARDS / PANELS ---------------- */
+
+.card-surface,
+.tab-card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+/* Titles & subtitles */
+.section-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.section-subtitle,
+.text-muted-small {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* ---------------- METRIC CARDS ---------------- */
+
+.metric-card {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}
+
+.metric-card .metric-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+}
+
+.metric-card .metric-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.metric-card .metric-sub {
+    font-size: 0.8rem;
+    margin-top: 6px;
+    opacity: 0.9;
+}
+
+/* Small coloured boxes on old layout (stay/leave/models/accuracy) */
+.small-box {
+    border-radius: 12px;
+    padding: 16px 18px;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+}
+
+.bg-green  { background: linear-gradient(135deg, #16a34a, #22c55e); }
+.bg-red    { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.bg-blue   { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+.bg-orange { background: linear-gradient(135deg, #ea580c, #f97316); }
+
+/* ---------------- FORMS (Single & Bulk) ---------------- */
+
+form label,
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: #374151;
+}
+
+form input[type="number"],
+form input[type="text"],
+form select,
+.form-control,
+.form-select {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+    border-radius: 8px !important;
+    border: 1px solid #d1d5db;
+    outline: none;
+    box-shadow: none !important;
+}
+
+form input:focus,
+form select:focus,
+.form-control:focus,
+.form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* Main form card on single prediction page */
+.single-form-card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+/* Multiple columns in form (if you use Bootstrap grid) */
+.field-group-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+
+/* Buttons */
+.btn-primary {
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+.btn-outline-primary {
+    border-radius: 999px;
+}
+
+/* ---------------- TABLES (Bulk & Dashboard) ---------------- */
+
+.table {
+    font-size: 0.85rem;
+}
+
+.table thead th {
+    background-color: #f9fafb;
+    color: #374151;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table tbody tr:hover {
+    background-color: #f3f4f6;
+}
+
+/* scroll container for tables */
+.table-responsive {
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+/* ---------------- TAGS / BADGES (UPDATED COLORS) ---------------- */
+
+.badge-risk {
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* 🟢 LOW RISK */
+.badge-low {
+    background-color: #dcfce7;   /* light green */
+    color: #166534;              /* dark green */
+    border: 1px solid #bbf7d0;
+}
+
+/* 🟡 MEDIUM RISK */
+.badge-medium {
+    background-color: #fef9c3;   /* light yellow */
+    color: #854d0e;              /* dark amber */
+    border: 1px solid #fde68a;
+}
+
+/* 🟠 HIGH RISK */
+.badge-high {
+    background-color: #ffedd5;   /* light orange */
+    color: #c2410c;              /* deep orange */
+    border: 1px solid #fdba74;
+}
+
+/* 🔴 CRITICAL RISK */
+.badge-critical {
+    background-color: #fee2e2;   /* light red */
+    color: #991b1b;              /* dark red */
+    border: 1px solid #fecaca;
+}
+
+
+/* ---------------- CHARTS ---------------- */
+
+canvas {
+    max-width: 100%;
+}
+
+/* Make charts a bit taller if wrapped in card */
+.card-surface canvas,
+.tab-card canvas {
+    margin-top: 8px;
+}
+
+/* ---------------- ALERTS ---------------- */
+
+.alert {
+    border-radius: 10px;
+}
+
+/* ---------------- RESPONSIVE TWEAKS ---------------- */
+
+@media (max-width: 992px) {
+    .navbar-custom .navbar-brand {
+        font-size: 0.95rem;
+    }
+
+    .menu-btn {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    .metric-card {
+        padding: 14px 14px;
+    }
+}
+/* ================= TAB-WISE CHART HEIGHT CONTROL ================= */
+
+/* 1️⃣ OVERVIEW TAB (pie, dept, job, tenure, gender, overtime) */
+#overview canvas {
+    height: 260px !important;      /* ⬅️ yaha se OVERVIEW ke charts ki height control karo */
+    max-height: 260px !important;
+}
+
+/* 2️⃣ RISK TAB (risk distribution, risk segmentation) */
+#risk canvas {
+    height: 260px !important;      /* ⬅️ RISK tab ke charts */
+    max-height: 260px !important;
+}
+
+/* 3️⃣ MODEL COMPARISON TAB (tables ke upar jo charts hain) */
+#models canvas {
+    height: 260px !important;      /* ⬅️ Model Acc / F1 charts */
+    max-height: 260px !important;
+}
+
+/* 4️⃣ FEATURE IMPORTANCE TAB */
+#featureimportance canvas {
+    height: 260px !important;      /* ⬅️ Feature importance bar chart */
+    max-height: 260px !important;
+}
+
+/* 5️⃣ SALARY TAB (Salary chart + Dept health) */
+#salary canvas {
+    height: 260px !important;      /* ⬅️ Salary & Dept Health */
+    max-height: 260px !important;
+}
+
+/* 6️⃣ FORECAST TAB */
+#forecast canvas {
+    height: 260px !important;      /* ⬅️ Forecast line chart */
+    max-height: 260px !important;
+}
+
+/* 7️⃣ INSIGHTS TAB (stability, age, income, donuts, dept rank) */
+#insights canvas {
+    height: 230px !important;      /* ⬅️ Insights ke charts thode chhote rakhe */
+    max-height: 230px !important;
+}
+/* ===== COMMON HEADER (Single + Bulk + Dashboard) ===== */
+.navbar {
+    background: linear-gradient(135deg, #0b1f3a, #123b6d) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.navbar-brand {
+    color: #ffffff !important;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-brand span {
+    font-size: 20px;
+}
+
+/* Navbar buttons */
+.navbar .btn {
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.navbar .btn-outline-primary {
+    color: #ffffff;
+    border-color: rgba(255,255,255,0.4);
+}
+
+.navbar .btn-outline-primary:hover {
+    background: #f4b41a;
+    border-color: #f4b41a;
+    color: #000;
+}
+
+.navbar .btn-outline-danger {
+    color: #f4b41a;
+    border-color: #f4b41a;
+}
+
+.navbar .btn-outline-danger:hover {
+    background: #f4b41a;
+    color: #000;
+}
+
+/* ===== BULK PAGE BACKGROUND ===== */
+body {
+    background: linear-gradient(180deg, #0b1f3a, #123b6d) !important;
+    color: #ffffff;
+}
+
+/* ===== BULK HEADER TEXT ===== */
+.container h2,
+.container p {
+    color: #ffffff !important;
+}
+
+/* ===== FILE UPLOAD CARD ===== */
+.card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 14px;
+}
+
+.card h5,
+.card .fw-bold {
+    color: #0b1f3a;
+}
+
+/* ===== FILE INPUT ===== */
+input[type="file"] {
+    background: #ffffff;
+}
+
+/* ===== RUN BULK BUTTON ===== */
+button.btn-primary {
+    background: linear-gradient(135deg, #f4b41a, #ffcc33);
+    border: none;
+    color: #000;
+    font-weight: 600;
+}
+
+button.btn-primary:hover {
+    background: linear-gradient(135deg, #ffcc33, #f4b41a);
+}
+
+/* ===== SUMMARY CARDS ===== */
+.card.bg-light {
+    background: #ffffff !important;
+}
+
+/* ===== TABLE ===== */
+.table {
+    background: #ffffff;
+}
+
+/* ===== CHART CARDS ===== */
+canvas {
+    background: #ffffff;
+    border-radius: 10px;
+}
+/* ===== BULK PAGE SAME AS SINGLE ===== */
+
+.bulk-bg {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0b2345, #081a33);
+}
+
+.bulk-navbar {
+    background: linear-gradient(90deg, #0b2345, #102f5a);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.bulk-bg .card {
+    border-radius: 16px;
+}
+
+.bulk-bg .card-body {
+    padding: 20px;
+}
+
+.bulk-bg h5 {
+    color: #111;
+}
+/* ===== COMMON DARK BLUE THEME (Single + Bulk same) ===== */
+
+body {
+    background: radial-gradient(circle at top, #0f2a44, #071a2d);
+    color: #ffffff;
+}
+
+/* ===== HEADER / NAVBAR ===== */
+.navbar {
+    background: linear-gradient(90deg, #0b2239, #0e355d) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.navbar-brand {
+    color: #ffffff !important;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-brand img {
+    height: 34px;
+}
+
+/* right side buttons */
+.navbar .btn {
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.navbar .btn-outline-primary {
+    color: #ffffff;
+    border-color: rgba(255,255,255,0.4);
+}
+
+.navbar .btn-outline-primary:hover {
+    background: #f6b73c;
+    color: #000;
+    border-color: #f6b73c;
+}
+
+.navbar .btn-outline-danger {
+    color: #ffb3b3;
+    border-color: #ffb3b3;
+}
+
+.navbar .btn-outline-danger:hover {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+/* ===== BULK PAGE HEADER TEXT ===== */
+.bulk-header h2,
+.bulk-header p {
+    color: #ffffff !important;
+}
+
+/* ===== FILE UPLOAD BAR ===== */
+.bulk-upload {
+    background: rgba(255,255,255,0.12);
+    border-radius: 14px;
+    padding: 16px;
+}
+
+/* buttons */
+.bulk-upload .btn-primary {
+    background: linear-gradient(90deg, #f6b73c, #f4a300);
+    border: none;
+    color: #000;
+    font-weight: 600;
+}
+
+.bulk-upload .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}

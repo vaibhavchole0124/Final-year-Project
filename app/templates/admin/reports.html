@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+{% block content %}
+
+<h2>Prediction Reports</h2>
+
+<table border="1" cellpadding="10">
+<tr>
+  <th>User</th>
+  <th>Prediction</th>
+  <th>Probability</th>
+  <th>Date</th>
+</tr>
+
+{% for r in reports %}
+<tr>
+  <td>{{ r.username }}</td>
+  <td>{{ r.prediction }}</td>
+  <td>{{ r.probability }}</td>
+  <td>{{ r.created_at }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

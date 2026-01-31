@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | HR Attrition System</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Lottie -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        :root {
+            --gold-1: #d7a432;
+            --gold-2: #b8861b;
+            --bg-top: #0f2a45;
+            --bg-bottom: #0b3550;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ================= INTRO SCREEN ================= */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .get-started-btn {
+            display: none;
+            margin-top: 20px;
+            padding: 12px 32px;
+            border-radius: 30px;
+            border: none;
+            background: #5b7cfa;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .get-started-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        /* ================= LOGIN PAGE ================= */
+        .login-bg {
+            height: 100vh;
+            background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            width: 430px;
+            background: #fff;
+            padding: 40px 38px;
+            border-radius: 22px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        .logo-wrap {
+            width: 170px;
+            height: 170px;
+            margin: 0 auto 14px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-wrap img {
+            width: 250px;
+            height: 250px;
+            object-fit: contain;
+        }
+
+        label.form-label {
+            font-weight: 600;
+            color: #374151;
+            text-align: left;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .form-control:focus {
+            border-color: var(--gold-1);
+            box-shadow: 0 0 0 3px rgba(215,164,50,0.22);
+        }
+
+        .btn-gold {
+            width: 100%;
+            background: linear-gradient(180deg, var(--gold-1), var(--gold-2));
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 12px 26px rgba(215,164,50,0.35);
+            margin-top: 6px;
+        }
+
+        .register-link {
+            display: block;
+            margin-top: 12px;
+            color: var(--gold-1);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .admin-login-link {
+            margin-top: 8px;
+        }
+
+        .admin-login-link a {
+            font-size: 0.9rem;
+            color: #b8861b;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: #9aa3af;
+            margin-top: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= INTRO SCREEN ================= -->
+<div id="introScreen" class="intro-screen">
+
+    <!-- BAG OPEN ANIMATION -->
+    <lottie-player
+        id="bagAnim"
+        src="{{ url_for('static', filename='animations/bag_open.json') }}"
+        background="transparent"
+        speed="1"
+        style="width:320px;height:320px">
+    </lottie-player>
+
+    <!-- CODING ANIMATION -->
+    <lottie-player
+        id="codingAnim"
+        src="{{ url_for('static', filename='animations/coding.json') }}"
+        background="transparent"
+        speed="1"
+        style="width:320px;height:320px; display:none;">
+    </lottie-player>
+
+    <button id="startBtn" class="get-started-btn" onclick="goToLogin()">
+        Get Started
+    </button>
+
+</div>
+
+<!-- ================= LOGIN PAGE (YOUR ORIGINAL) ================= -->
+<div id="loginPage" style="display:none;">
+    <div class="login-bg">
+        <div class="login-card">
+
+            <div class="logo-wrap">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+            </div>
+
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-3 text-start">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" required autofocus>
+                </div>
+
+                <div class="mb-3 text-start">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+
+                <button class="btn-gold" type="submit">Login</button>
+            </form>
+
+            <a href="{{ url_for('register') }}" class="register-link">
+                Create a new account
+            </a>
+
+            <div class="admin-login-link">
+                <a href="/admin/login" class="btn w-100 mt-3 admin-login-btn">
+                    Login as Admin
+                </a>
+            </div>
+
+            <div class="footer-text">
+                Powered by Vaibhav | Secure Login Portal
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ================= JS ================= -->
+<script>
+const bagAnim = document.getElementById("bagAnim");
+const codingAnim = document.getElementById("codingAnim");
+const startBtn = document.getElementById("startBtn");
+
+bagAnim.play();
+
+// Bag open ke baad coding + button
+setTimeout(() => {
+    bagAnim.style.display = "none";
+    codingAnim.style.display = "block";
+    codingAnim.play();
+    startBtn.style.display = "block";
+}, 2500);
+
+function goToLogin() {
+    document.getElementById("introScreen").style.display = "none";
+    document.getElementById("loginPage").style.display = "block";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+/* ===== COMMON BACKGROUND ===== */
+body {
+    background: linear-gradient(180deg, #0f2a45, #0b3550);
+    min-height: 100vh;
+    font-family: system-ui;
+}
+
+/* ===== HEADER / NAVBAR ===== */
+.navbar {
+    background: linear-gradient(180deg, #0f2a45, #0b3550) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.navbar-brand {
+    color: #fff !important;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand img {
+    height: 36px;
+    margin-right: 10px;
+}
+
+.navbar .btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* ===== PAGE HEADING ===== */
+.page-title {
+    color: #fff;
+    font-weight: 800;
+}
+
+.page-subtitle {
+    color: #d1d5db;
+}
+
+/* ===== CARDS ===== */
+.card {
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+/* ===== TABLE ===== */
+.table {
+    background: #fff;
+}
+
+/* ===== DASHBOARD SMALL BOX ===== */
+.small-box {
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}

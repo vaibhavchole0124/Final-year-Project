@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Environment Variables
+.env
+
+# Database
+*.db
+*.sqlite3
+users.db
+users.db.bak
+
+# Flask
+instance/
+.webassets-cache
+
+# OS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Project specific logs/outputs
+outputs/
+reports/
+predictions/

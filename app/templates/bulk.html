@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulk Attrition Prediction</title>
+
+    <!-- BOOTSTRAP + CHART.JS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="bulk-bg">
+
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg px-4 py-3 bulk-navbar">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <img src="{{ url_for('static', filename='logo.png') }}" height="32">
+        <span class="fw-bold text-white">EMPLOYEE ATTRITION SYSTEM</span>
+    </a>
+
+    <div class="ms-auto d-flex gap-2">
+        <a href="/" class="btn btn-outline-light btn-sm">Single</a>
+        <a href="/bulk" class="btn btn-warning btn-sm fw-bold">Bulk</a>
+        <a href="/dashboard" class="btn btn-outline-light btn-sm">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+    </div>
+</nav>
+
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+    <div class="mb-3">
+        <h2 class="fw-bold">Bulk Employee Attrition Prediction</h2>
+        <p class="text-muted">
+            Upload a CSV or Excel file containing employee records and get predictions,
+            risk segmentation, and downloadable reports.
+        </p>
+    </div>
+
+    <!-- FILE UPLOAD CARD -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-5">
+                        <input class="form-control" type="file" name="file" accept=".csv,.xls,.xlsx">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary w-100" type="submit">
+                            🚀 Run Bulk Prediction
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">
+                            Required columns: {{ FEATURE_COLS|default([]) }}
+                            (same as training dataset).
+                        </small>
+                    </div>
+                </div>
+            </form>
+
+            {% if error %}
+                <div class="alert alert-danger mt-3">
+                    {{ error }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if summary %}
+
+    <!-- SUMMARY CARDS -->
+    <div class="row mb-3">
+        <div class="col-md-3 mb-2">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <div class="fw-bold">Total Employees</div>
+                    <div class="fs-4">{{ summary.total }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card shadow-sm border-0" style="background:#e8f5e9;">
+                <div class="card-body">
+                    <div class="fw-bold">Staying</div>
+                    <div class="fs-5">{{ summary.staying }} ({{ summary.stay_pct }}%)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card shadow-sm border-0" style="background:#ffebee;">
+                <div class="card-body">
+                    <div class="fw-bold">Leaving</div>
+                    <div class="fs-5">{{ summary.leaving }} ({{ summary.leave_pct }}%)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card shadow-sm border-0" style="background:#fff3e0;">
+                <div class="card-body">
+                    <div class="fw-bold">Risk Buckets</div>
+                    <div class="small">
+                        🟢 Low: {{ summary.risk_low }}<br>
+                        🟡 Med: {{ summary.risk_med }}<br>
+                        🟠 High: {{ summary.risk_high }}<br>
+                        🔴 Crit: {{ summary.risk_crit }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOWNLOAD BUTTONS (dropdowns with 3 options each) -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="d-flex flex-wrap gap-2">
+
+                <!-- CSV dropdown -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success">📥 Download CSV</button>
+                    <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/download/csv/leave">Leave (CSV)</a></li>
+                        <li><a class="dropdown-item" href="/download/csv/stay">Stay (CSV)</a></li>
+                        <li><a class="dropdown-item" href="/download/csv/summary">Summary (CSV)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Excel dropdown -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-warning">📊 Download Excel</button>
+                    <button type="button" class="btn btn-warning dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/download/excel/leave">Leave (XLSX)</a></li>
+                        <li><a class="dropdown-item" href="/download/excel/stay">Stay (XLSX)</a></li>
+                        <li><a class="dropdown-item" href="/download/excel/summary">Summary (XLSX)</a></li>
+                    </ul>
+                </div>
+
+                <!-- PDF dropdown -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger">📄 Download PDF</button>
+                    <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/download/pdf/leave">Leave (PDF)</a></li>
+                        <li><a class="dropdown-item" href="/download/pdf/stay">Stay (PDF)</a></li>
+                        <li><a class="dropdown-item" href="/download/pdf/summary">Summary (PDF)</a></li>
+                    </ul>
+                </div>
+
+                <!-- ZIP dropdown -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary">🗜️ Download ZIP</button>
+                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/download/zip/leave">Leave (ZIP)</a></li>
+                        <li><a class="dropdown-item" href="/download/zip/stay">Stay (ZIP)</a></li>
+                        <li><a class="dropdown-item" href="/download/zip/summary">Summary (ZIP)</a></li>
+                    </ul>
+                </div>
+
+        
+
+            </div>
+        </div>
+    </div>
+
+    <!-- PIE CHART: STAY vs LEAVE -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-2">Overall Prediction Split</h5>
+                    <canvas id="stayLeaveChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- RISK SEGMENTATION CHART -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-2">Risk Segmentation</h5>
+                    <canvas id="riskSegChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS TABLE -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">Top 100 Predictions (Preview)</h5>
+
+            <div class="table-responsive" style="max-height:450px; overflow-y:auto;">
+                <table class="table table-sm table-striped table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            {% for col in columns %}
+                                <th>{{ col }}</th>
+                            {% endfor %}
+                            <th>Report Card</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in table %}
+                            <tr>
+                                {% for col in columns %}
+                                    <td>{{ row[col] }}</td>
+                                {% endfor %}
+                                <td>
+                                    <a href="/employee_report/{{ row.EmployeeNumber }}" class="btn btn-outline-secondary btn-sm">
+                                        Report
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="text-muted mt-2 mb-0">
+                Only first 100 employees are shown here.
+                Use the CSV / Excel / ZIP downloads for full data.
+            </p>
+        </div>
+    </div>
+
+    {% else %}
+        <p class="text-muted">
+            Upload a file above and run prediction to see summary, charts and downloads.
+        </p>
+    {% endif %}
+
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{% if summary %}
+<script>
+    // Stay vs Leave pie chart
+    (function() {
+        const ctx = document.getElementById("stayLeaveChart");
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: ["Stay", "Leave"],
+                datasets: [{
+                    data: [{{ summary.staying }}, {{ summary.leaving }}],
+                    backgroundColor: ["#4caf50", "#f44336"]
+                }]
+            },
+            options: {
+                plugins: { legend: { position: "bottom" } }
+            }
+        });
+    })();
+
+    // Risk segmentation chart
+    (function() {
+        const ctx = document.getElementById("riskSegChart");
+        if (!ctx) return;
+
+        const labels = ["Low", "Medium", "High", "Critical"];
+        const values = [
+            {{ summary.risk_low }},
+            {{ summary.risk_med }},
+            {{ summary.risk_high }},
+            {{ summary.risk_crit }}
+        ];
+
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: ["#4caf50", "#ffeb3b", "#ff9800", "#f44336"]
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
+                }
+            }
+        });
+    })();
+</script>
+{% endif %}
+
+</body>
+</html> 

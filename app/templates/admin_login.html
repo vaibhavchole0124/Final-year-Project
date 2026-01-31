@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login | HR Attrition System</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        :root {
+            --gold-1: #d7a432;
+            --gold-2: #b8861b;
+            --bg-top: #0f2a45;
+            --bg-bottom: #0b3550;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-card {
+            width: 430px;
+            background: #fff;
+            padding: 40px 38px;
+            border-radius: 22px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        /* ⭐ LOGO – SAME AS USER LOGIN */
+        .logo-wrap {
+            width: 170px;
+            height: 170px;
+            margin: 0 auto 14px auto;
+            background: transparent;
+            box-shadow: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-wrap img {
+            width: 250px;
+            height: 250px;
+            object-fit: contain;
+            background: transparent;
+            border: none;
+        }
+
+        label.form-label {
+            font-weight: 600;
+            color: #374151;
+            text-align: left;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .form-control:focus {
+            border-color: var(--gold-1);
+            box-shadow: 0 0 0 3px rgba(215,164,50,0.22);
+        }
+
+        .btn-gold {
+            width: 100%;
+            background: linear-gradient(180deg, var(--gold-1), var(--gold-2));
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 12px 26px rgba(215,164,50,0.35);
+            margin-top: 6px;
+        }
+
+        .btn-gold:active {
+            transform: translateY(1px);
+            box-shadow: 0 6px 14px rgba(215,164,50,0.18);
+        }
+
+        /* 🔙 BACK TO USER LOGIN */
+        .admin-login-link {
+            margin-top: 12px;
+        }
+
+        .admin-login-link a {
+            font-size: 0.9rem;
+            color: #b8861b;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .admin-login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: #9aa3af;
+            margin-top: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+
+    <!-- LOGO -->
+    <div class="logo-wrap">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+    </div>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <!-- ADMIN LOGIN FORM -->
+    <form method="POST" action="{{ url_for('admin_login') }}">
+        <div class="mb-3 text-start">
+            <label class="form-label">Admin Username</label>
+            <input type="text" name="username" class="form-control" placeholder="Enter admin username" required autofocus>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+        </div>
+
+        <button class="btn-gold" type="submit">Login as Admin</button>
+    </form>
+
+    <!-- 🔙 BACK TO USER LOGIN -->
+    <div class="admin-login-link">
+        <a href="{{ url_for('login') }}">← Back to User Login</a>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-text">
+        Powered by Vaibhav | Secure Login Portal
+    </div>
+
+</div>
+
+</body>
+</html>
