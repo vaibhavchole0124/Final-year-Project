@@ -6,8 +6,10 @@ import smtplib
 import random
 import certifi
 os.environ["SSL_CERT_FILE"] = certifi.where()
-EMAIL_SENDER = "vaibhavchole0124@gmail.com"
-EMAIL_PASSWORD = "sfibthccgwwqfand"   # Gmail App Password
+from dotenv import load_dotenv
+load_dotenv()
+
+# EMAIL_SENDER and PASSWORD handled via os.environ below
 
 from functools import wraps
 
@@ -46,8 +48,8 @@ import os
 
 SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT   = int(os.environ.get("SMTP_PORT", 587))
-SMTP_USER   = os.environ.get("SMTP_USER", "")
-SMTP_PASS   = os.environ.get("SMTP_PASS", "")
+SMTP_USER   = os.environ.get("EMAIL_SENDER", "") # Use EMAIL_SENDER as SMTP_USER
+SMTP_PASS   = os.environ.get("EMAIL_PASSWORD", "")
 EMAIL_FROM  = os.environ.get("EMAIL_FROM", SMTP_USER)
 
 OTP_LENGTH = 6
@@ -134,7 +136,7 @@ def send_email_otp(to_email, subject, body):
 # -----------------------------------------------------------------------------
 app = Flask(__name__)
 # Secret key for session. Replace with a secure random string for production.
-app.secret_key = "change_this_secret_please_!2025"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "fallback_dev_secret")
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "data", "WA_Fn-UseC_-HR-Employee-Attrition.csv")
