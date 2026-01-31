@@ -2,6 +2,9 @@ import os
 import io
 import zipfile
 import sqlite3
+import psycopg2
+import psycopg2.extras
+from urllib.parse import urlparse
 import smtplib
 import random
 import certifi
@@ -40,6 +43,10 @@ try:
 except Exception:
     REPORTLAB_AVAILABLE = False
 
+# SHAP support
+import shap
+SHAP_EXPLAINER = None
+
 # ---------------------- EMAIL + OTP CONFIG -----------------------
 import ssl
 import time
@@ -62,35 +69,52 @@ import os, sqlite3
 
 
 def get_db():
-    db_path = os.path.join(os.path.dirname(__file__), "users.db")
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
+    db_url = os.environ.get("DATABASE_URL")
+    if db_url:
+        # PostgreSQL Connection
+        conn = psycopg2.connect(db_url)
+        return conn
+    else:
+        # SQLite Fallback (Local Dev)
+        db_path = os.path.join(os.path.dirname(__file__), "users.db")
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
 
-def save_prediction(username, prediction, probability):
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO predictions (username, prediction, probability)
-        VALUES (?, ?, ?)
-    """, (username, prediction, probability))
-    conn.commit()
-    conn.close()
+class CursorWrapper:
+    def __init__(self, cursor, is_postgres):
+        self.cursor = cursor
+        self.is_postgres = is_postgres
 
+    def execute(self, query, params=None):
+        if self.is_postgres:
+            query = query.replace("?", "%s")
+        if params is None:
+            return self.cursor.execute(query)
+        return self.cursor.execute(query, params)
 
-def save_prediction(username, prediction, probability):
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO predictions (username, prediction, probability)
-        VALUES (?, ?, ?)
-    """, (username, prediction, probability))
-    conn.commit()
-    conn.close()
+    def fetchone(self):
+        return self.cursor.fetchone()
+
+    def fetchall(self):
+        return self.cursor.fetchall()
+
+    def __getattr__(self, name):
+        return getattr(self.cursor, name)
+
+def get_cursor(conn):
+    # Helper to get a cursor that works for both (DictCursor for Postgres to mimic sqlite3.Row)
+    is_postgres = not isinstance(conn, sqlite3.Connection)
+    if is_postgres:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    else:
+        cur = conn.cursor()
+    return CursorWrapper(cur, is_postgres)
+
 
 def save_prediction(username, result, probability, prediction_type="Single"):
     conn = get_db()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
 
     cur.execute("""
         INSERT INTO prediction_logs (username, prediction_type, result, probability)
@@ -161,26 +185,30 @@ LAST_BULK_DF = None
 FEATURE_COLS = [
     "Age", "BusinessTravel", "DailyRate", "Department",
     "DistanceFromHome", "Education", "EducationField",
-    "EmployeeCount", "EmployeeNumber", "EnvironmentSatisfaction",
+    "EnvironmentSatisfaction",
     "Gender", "HourlyRate", "JobInvolvement", "JobLevel",
     "JobRole", "JobSatisfaction", "MaritalStatus", "MonthlyIncome",
-    "MonthlyRate", "NumCompaniesWorked", "Over18", "OverTime",
+    "MonthlyRate", "NumCompaniesWorked", "OverTime",
     "PercentSalaryHike", "PerformanceRating", "RelationshipSatisfaction",
-    "StandardHours", "StockOptionLevel", "TotalWorkingYears",
+    "StockOptionLevel", "TotalWorkingYears",
     "TrainingTimesLastYear", "WorkLifeBalance", "YearsAtCompany",
-    "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager"
+    "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager",
+    "MaternityPaternityLeave", "WorkplaceHarassment", "RemoteWorkFrequency",
+    "MentalHealthResources", "ProjectDeadlinePressure", "SkillDevelopmentHours"
 ]
 
 NUMERIC_FEATURES = [
     "Age", "DailyRate", "DistanceFromHome", "Education",
-    "EmployeeCount", "EmployeeNumber", "EnvironmentSatisfaction",
+    "EnvironmentSatisfaction",
     "HourlyRate", "JobInvolvement", "JobLevel", "JobSatisfaction",
     "MonthlyIncome", "MonthlyRate", "NumCompaniesWorked",
     "PercentSalaryHike", "PerformanceRating", "RelationshipSatisfaction",
-    "StandardHours", "StockOptionLevel", "TotalWorkingYears",
+    "StockOptionLevel", "TotalWorkingYears",
     "TrainingTimesLastYear", "WorkLifeBalance", "YearsAtCompany",
     "YearsInCurrentRole", "YearsSinceLastPromotion",
-    "YearsWithCurrManager"
+    "YearsWithCurrManager",
+    "MaternityPaternityLeave", "WorkplaceHarassment", "RemoteWorkFrequency",
+    "MentalHealthResources", "ProjectDeadlinePressure", "SkillDevelopmentHours"
 ]
 
 CATEGORICAL_FEATURES = [
@@ -197,6 +225,17 @@ try:
     preprocessor = joblib.load(PREPROCESSOR_PATH)
     model = joblib.load(MODEL_PATH)
     print("✅ Model and Preprocessor loaded successfully!")
+    
+    # Init SHAP
+    try:
+        # Use TreeExplainer for Random Forest
+        # We need to pass the model, but TreeExplainer handles sklearn models directly usually.
+        # But wait, our model is a pipeline? No, it's just the model object in the pickle.
+        # Let's verify what 'model' is. If it's RandomForestClassifier, this works.
+        SHAP_EXPLAINER = shap.TreeExplainer(model)
+        print("✅ SHAP Explainer initialized!")
+    except Exception as e:
+        print(f"⚠️ SHAP Init Failed: {e}")
 except Exception as e:
     print(f"⚠️ Warning: Could not load model/preprocessor — {e}")
     preprocessor = None
@@ -419,6 +458,26 @@ def make_recommendations(row, score):
     if f("TotalWorkingYears") <= 3:
         recs.append("Early career employee – Provide mentoring and skill development.")
 
+    # New Features
+    if f("WorkplaceHarassment") == 1:
+        recs.append("⚠️ Uses reported Workplace Harassment – Immediate investigation required.")
+
+    if f("RemoteWorkFrequency") == 0:
+        recs.append("Zero remote work – Consider offering hybrid options.")
+    
+    if f("MaternityPaternityLeave") == 1:
+        recs.append("Returning from parental leave – Ensure smooth reintegration support.")
+
+    # Round 2 Features
+    if f("MentalHealthResources") == 0:
+        recs.append("Lack of mental health support – Consider introducing wellness programs.")
+    
+    if f("ProjectDeadlinePressure") >= 3:
+        recs.append("High deadline pressure – Review workload distribution to prevent burnout.")
+    
+    if f("SkillDevelopmentHours") < 5:
+        recs.append("Low skill development – Increases stagnation risk. Encourage training.")
+
     # Salary-related
     if f("MonthlyIncome") < 3000:
         recs.append("Low salary – Review compensation adjustments.")
@@ -487,17 +546,34 @@ def register():
 
         # ---------- DATABASE ----------
         conn = get_db()
-        cur = conn.cursor()
+        cur = get_cursor(conn)
+
 
         # Ensure table exists
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE,
-                password TEXT,
-                email TEXT
-            )
-        """)
+        # Note: SQLite uses AUTOINCREMENT, Postgres uses SERIAL (or GENERATED BY DEFAULT AS IDENTITY)
+        # We need dialect-specific DDL or a generic one. 
+        # For this quick migration, let's just check table existence safely.
+        
+        # We'll rely on a manual init or check. 
+        # But to keep the auto-init behavior:
+        if isinstance(conn, sqlite3.Connection):
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT UNIQUE,
+                    password TEXT,
+                    email TEXT
+                )
+            """)
+        else:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    username TEXT UNIQUE,
+                    password TEXT,
+                    email TEXT
+                )
+            """)
         conn.commit()
 
         # Email = Username
@@ -554,7 +630,7 @@ def login():
 
             # DB check
             conn = get_db()
-            cur = conn.cursor()
+            cur = get_cursor(conn)
             cur.execute("SELECT * FROM users WHERE username = ?", (username,))
             user = cur.fetchone()
             conn.close()
@@ -692,7 +768,7 @@ def resend_otp():
 
         # Fetch email address from DB
         conn = get_db()
-        cur = conn.cursor()
+        cur = get_cursor(conn)
         cur.execute("SELECT email FROM users WHERE username = ?", (username,))
         user = cur.fetchone()
         conn.close()
@@ -772,6 +848,39 @@ def index():
                 chart_color = "#198754"
                 prediction_result = "Safe"
 
+            # Explain with SHAP
+            explanation = []
+            if SHAP_EXPLAINER and prob >= 0.5:
+                # Transform just this row
+                X_shap = preprocessor.transform(df)
+                # Calculate SHAP values
+                shap_values = SHAP_EXPLAINER.shap_values(X_shap)
+                
+                # shap_values is list for classification [val_class0, val_class1]
+                # We want class 1 (Leave)
+                # Handle binary case:
+                if isinstance(shap_values, list):
+                    vals = shap_values[1][0] # Class 1, first (only) row
+                else:
+                    # If older/newer shap version returns matrix directly
+                    vals = shap_values[0] if len(shap_values.shape)==2 else shap_values[1][0] 
+
+                # Map column names
+                feature_names = get_preprocessor_output_columns(preprocessor)
+                
+                # Sort absolute imp
+                # But we care about POSITIVE contribution to LEAVE (vals > 0)
+                # Let's take top 3 contributors
+                import pandas as pd
+                shap_df = pd.DataFrame(list(zip(feature_names, vals)), columns=['Feature', 'SHAP'])
+                # Filter positive (driving attrition)
+                shap_df = shap_df[shap_df['SHAP'] > 0].sort_values(by='SHAP', ascending=False).head(3)
+                
+                for _, r in shap_df.iterrows():
+                    feat_clean = r['Feature'].split('__')[-1] # cleaner name
+                    explanation.append(feat_clean)
+
+
             # ✅ SAVE PREDICTION LOG
             save_prediction(
                 session.get("username"),
@@ -787,6 +896,7 @@ def index():
                 "badge_class": badge_class,
                 "chart_color": chart_color,
                 "recommendations": make_recommendations(df.iloc[0], risk_score),
+                "key_drivers": explanation # Add this
             }
 
         except Exception as e:
@@ -828,6 +938,10 @@ def bulk():
         if missing:
             return render_template("bulk.html", error="Missing columns: " + ", ".join(missing))
 
+        # Enforce EmployeeNumber for identification
+        if "EmployeeNumber" not in df.columns:
+            return render_template("bulk.html", error="Missing required identification column: EmployeeNumber")
+
         # Run model
         df_features = df[FEATURE_COLS].copy()
         try:
@@ -851,6 +965,12 @@ def bulk():
 
         df_result["RiskBucket"] = buckets
         df_result["Recommendations"] = recs_list
+
+        # Reorder columns: Put EmployeeNumber first, then Predictions/Risk, then Features
+        cols = ["EmployeeNumber", "AttritionPrediction", "RiskScore", "RiskBucket", "Recommendations"] + \
+               [c for c in df.columns if c not in ["EmployeeNumber", "AttritionPrediction", "RiskScore", "RiskBucket", "Recommendations"]]
+        
+        df_result = df_result[cols]
 
         # Ensure output folder
         os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -920,7 +1040,61 @@ def bulk():
         table = leave_only.to_dict(orient="records")
         columns = list(leave_only.columns)
 
+        # 🔔 PROACTIVE ALERT: Send email if Critical Risk found
+        if crit_cnt > 0:
+             try:
+                 critical_ids = df_result[df_result["RiskBucket"] == "Critical"]["EmployeeNumber"].tolist()
+                 # Limit to first 20 for email brevity
+                 ids_str = ", ".join(map(str, critical_ids[:20]))
+                 if len(critical_ids) > 20: 
+                     ids_str += f" ... and {len(critical_ids)-20} more."
+
+                 # Get user email
+                 conn_alert = get_db()
+                 cur_alert = get_cursor(conn_alert)
+                 cur_alert.execute("SELECT email FROM users WHERE username = ?", (session.get("username"),))
+                 u_alert = cur_alert.fetchone()
+                 conn_alert.close()
+                 
+                 if u_alert and u_alert["email"]:
+                     subject = f"⚠️ CRITICAL ALERT: {crit_cnt} Employees at High Risk"
+                     body = f"""
+                     ATTN: HR Admin,
+
+                     The recent bulk analysis detected {crit_cnt} employees with CRITICAL attrition risk.
+                     
+                     Employee IDs:
+                     {ids_str}
+
+                     Please review the full report immediately on the dashboard.
+
+                     - Employee Attrition System
+                     """
+                     if os.environ.get("DEV_MODE_SHOW_OTP") != "1":
+                         send_email_otp(u_alert["email"], subject, body)
+                         print(f"📧 Alert sent to {u_alert['email']}")
+             except Exception as e:
+                 print(f"⚠️ Failed to send alert email: {e}")
+
     return render_template("bulk.html", error=error, summary=summary, chart=chart, table=table, columns=columns)
+
+
+# ============================= HISTORY / ANALYTICS ===========================
+@app.route("/history")
+def history():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+    
+    conn = get_db()
+    cur = get_cursor(conn)
+    
+    # Fetch user's history
+    username = session.get("username")
+    cur.execute("SELECT * FROM prediction_logs WHERE username = ? ORDER BY timestamp DESC LIMIT 50", (username,))
+    rows = cur.fetchall()
+    conn.close()
+    
+    return render_template("history.html", history=rows)
 
 
 
@@ -1361,7 +1535,7 @@ def admin_required(f):
 @admin_required
 def high_risk_employees():
     conn = get_db()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
 
     cur.execute("""
         SELECT username, risk_score
@@ -1384,7 +1558,7 @@ def high_risk_employees():
 @admin_required
 def admin_dashboard():
     conn = sqlite3.connect("users.db")
-    cur = conn.cursor()
+    cur = get_cursor(conn)
 
     # ---------------- SUMMARY CARDS ----------------
     cur.execute("SELECT COUNT(*) FROM users")
@@ -1512,7 +1686,7 @@ def logout():
 @admin_required
 def admin_users():
     conn = get_db()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("SELECT id, username, email, role, status FROM users")
     users = cur.fetchall()
     conn.close()
@@ -1528,7 +1702,7 @@ def admin_login():
         password = request.form.get("password", "").strip()
 
         conn = get_db()
-        cur = conn.cursor()
+        cur = get_cursor(conn)
 
         cur.execute("""
             SELECT id, username, password, role
@@ -1568,7 +1742,7 @@ def admin_login():
 @admin_required
 def admin_reports():
     conn = get_db()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
         SELECT username, prediction, probability, created_at
         FROM predictions
