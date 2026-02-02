@@ -1,245 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Login | HR Attrition System</title>
-
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Lottie -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
     <style>
         :root {
-            --gold-1: #d7a432;
-            --gold-2: #b8861b;
-            --bg-top: #0f2a45;
-            --bg-bottom: #0b3550;
+            --cord-length: 100px;
         }
 
         body {
             margin: 0;
-            height: 100vh;
+            overflow: hidden;
+            background: #111;
             font-family: 'Inter', sans-serif;
         }
 
-        /* ================= INTRO SCREEN ================= */
-        .intro-screen {
+        /* Background Image */
+        .bg-image {
             position: fixed;
             inset: 0;
-            background: #ffffff;
+            background: url('/static/login_background_lamp.png') no-repeat center center/cover;
+            z-index: -2;
+            filter: brightness(0.3);
+            /* Default darker */
+            transition: filter 0.8s ease;
+        }
+
+        /* Dark Overlay for the "Off" state */
+        .dark-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            /* Very dark */
+            z-index: -1;
+            transition: opacity 0.8s ease;
+        }
+
+        .lamp-container.on .bg-image {
+            filter: brightness(0.8);
+            /* Illuminate background */
+        }
+
+        .lamp-container.on .dark-overlay {
+            opacity: 0;
+            /* Clear darkness */
+        }
+
+        /* Lamp Structure */
+        .lamp-wrapper {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            z-index: 9999;
         }
 
-        .get-started-btn {
-            display: none;
-            margin-top: 20px;
-            padding: 12px 32px;
-            border-radius: 30px;
-            border: none;
-            background: #5b7cfa;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
+        .lamp-cord {
+            position: relative;
             cursor: pointer;
-            transition: 0.3s;
+            z-index: 20;
+            animation: swing 3s infinite ease-in-out;
+            transform-origin: top center;
         }
 
-        .get-started-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        .cord-line {
+            width: 2px;
+            height: var(--cord-length);
+            background: #ccc;
+            margin: 0 auto;
         }
 
-        /* ================= LOGIN PAGE ================= */
-        .login-bg {
-            height: 100vh;
-            background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-card {
-            width: 430px;
+        .cord-handle {
+            width: 10px;
+            height: 10px;
             background: #fff;
-            padding: 40px 38px;
-            border-radius: 22px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            border-radius: 50%;
+            margin: -2px auto 0;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .lamp-shade {
+            width: 120px;
+            height: 60px;
+            background: #222;
+            border-radius: 60px 60px 0 0;
+            /* Dome shape */
+            position: absolute;
+            top: -40px;
+            /* Hide slightly above */
+        }
+
+        /* The Light Beam */
+        .light-beam {
+            position: absolute;
+            top: var(--cord-length);
+            /* Start below the lamp fixture */
+            left: 50%;
+            transform: translateX(-50%) perspective(600px) rotateX(20deg) scale(0);
+            transform-origin: top center;
+            width: 600px;
+            height: 120vh;
+            background: linear-gradient(to bottom, rgba(255, 235, 150, 0.5) 0%, rgba(255, 235, 150, 0) 80%);
+            clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 5;
+        }
+
+        .lamp-container.on .light-beam {
+            opacity: 1;
+            transform: translateX(-50%) perspective(600px) rotateX(20deg) scale(1);
+        }
+
+        /* Login Box */
+        .login-box-wrapper {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.2s;
+            /* Delay slightly */
+        }
+
+        .lamp-container.on .login-box-wrapper {
+            opacity: 1;
+        }
+
+        .minimalist-card {
+            width: 350px;
+            padding: 30px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .logo-wrap {
-            width: 170px;
-            height: 170px;
-            margin: 0 auto 14px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .logo-wrap img {
-            width: 250px;
-            height: 250px;
-            object-fit: contain;
-        }
-
-        label.form-label {
-            font-weight: 600;
-            color: #374151;
-            text-align: left;
-        }
-
-        .form-control {
-            border-radius: 12px;
-            padding: 12px;
-            background: rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.08);
-        }
-
-        .form-control:focus {
-            border-color: var(--gold-1);
-            box-shadow: 0 0 0 3px rgba(215,164,50,0.22);
-        }
-
-        .btn-gold {
-            width: 100%;
-            background: linear-gradient(180deg, var(--gold-1), var(--gold-2));
+        .glass-input {
+            background: rgba(255, 255, 255, 0.2) !important;
             border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            box-shadow: 0 12px 26px rgba(215,164,50,0.35);
-            margin-top: 6px;
+            color: #fff !important;
         }
 
-        .register-link {
-            display: block;
-            margin-top: 12px;
-            color: var(--gold-1);
-            font-weight: 600;
-            text-decoration: none;
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: none;
         }
 
-        .admin-login-link {
-            margin-top: 8px;
+        /* Typography overrides for glass */
+        h2.text-white {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .admin-login-link a {
-            font-size: 0.9rem;
-            color: #b8861b;
-            font-weight: 600;
-            text-decoration: none;
+        label.text-white {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
-        .footer-text {
-            font-size: 0.85rem;
-            color: #9aa3af;
-            margin-top: 14px;
+        @keyframes swing {
+            0% {
+                transform: rotate(1deg);
+            }
+
+            50% {
+                transform: rotate(-1deg);
+            }
+
+            100% {
+                transform: rotate(1deg);
+            }
+        }
+
+        .cord-line:hover {
+            background: #f4b41a;
+        }
+
+        .btn-warning {
+            background-color: #f4b41a;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background-color: #ffcd3c;
+        }
+
+        /* Auto-inject pull animation */
+        @keyframes pull {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(15px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
+
 <body>
 
-<!-- ================= INTRO SCREEN ================= -->
-<div id="introScreen" class="intro-screen">
-
-    <!-- BAG OPEN ANIMATION -->
-    <lottie-player
-        id="bagAnim"
-        src="{{ url_for('static', filename='animations/bag_open.json') }}"
-        background="transparent"
-        speed="1"
-        style="width:320px;height:320px">
-    </lottie-player>
-
-    <!-- CODING ANIMATION -->
-    <lottie-player
-        id="codingAnim"
-        src="{{ url_for('static', filename='animations/coding.json') }}"
-        background="transparent"
-        speed="1"
-        style="width:320px;height:320px; display:none;">
-    </lottie-player>
-
-    <button id="startBtn" class="get-started-btn" onclick="goToLogin()">
-        Get Started
-    </button>
-
-</div>
-
-<!-- ================= LOGIN PAGE (YOUR ORIGINAL) ================= -->
-<div id="loginPage" style="display:none;">
-    <div class="login-bg">
-        <div class="login-card">
-
-            <div class="logo-wrap">
-                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+    <div class="lamp-container">
+        <!-- Lamp & Cord -->
+        <div class="lamp-wrapper">
+            <div class="lamp-cord" onclick="toggleLight()">
+                <div class="cord-line"></div>
+                <div class="cord-handle"></div>
             </div>
-
-            {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
-
-            <form method="POST" action="{{ url_for('login') }}">
-                <div class="mb-3 text-start">
-                    <label class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" required autofocus>
-                </div>
-
-                <div class="mb-3 text-start">
-                    <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-
-                <button class="btn-gold" type="submit">Login</button>
-            </form>
-
-            <a href="{{ url_for('register') }}" class="register-link">
-                Create a new account
-            </a>
-
-            <div class="admin-login-link">
-                <a href="/admin/login" class="btn w-100 mt-3 admin-login-btn">
-                    Login as Admin
-                </a>
-            </div>
-
-            <div class="footer-text">
-                Powered by Vaibhav | Secure Login Portal
-            </div>
-
+            <div class="lamp-shade"></div>
+            <div class="light-beam" id="lightBeam"></div>
         </div>
+
+        <!-- Login Form (Initially Hidden in Dark) -->
+        <div class="login-box-wrapper" id="loginBox">
+            <div class="login-card minimalist-card">
+                <h2 class="mb-4 text-white">Welcome Back</h2>
+
+                {% if error %}
+                <div class="alert alert-danger p-2">{{ error }}</div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3 text-start">
+                        <label class="text-white small">Username</label>
+                        <input type="text" name="username" class="form-control glass-input" required autofocus>
+                    </div>
+                    <div class="mb-3 text-start">
+                        <label class="text-white small">Password</label>
+                        <input type="password" name="password" class="form-control glass-input" required>
+                    </div>
+                    <button class="btn btn-warning w-100 fw-bold mt-2" type="submit">SIGN IN</button>
+                </form>
+
+                <div class="mt-3">
+                    <a href="{{ url_for('register') }}" class="text-white-50 small text-decoration-none">Create
+                        Account</a>
+                </div>
+
+                <div class="admin-login-link mt-3">
+                    <a href="/admin/login" class="text-white-50 small text-decoration-none">
+                        Login as Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dark Overlay (Fades out when light is on) -->
+        <div class="dark-overlay" id="darkOverlay"></div>
+
+        <!-- Background -->
+        <div class="bg-image"></div>
     </div>
-</div>
 
-<!-- ================= JS ================= -->
-<script>
-const bagAnim = document.getElementById("bagAnim");
-const codingAnim = document.getElementById("codingAnim");
-const startBtn = document.getElementById("startBtn");
+    <script>
+        function toggleLight() {
+            const container = document.querySelector('.lamp-container');
+            const cord = document.querySelector('.lamp-cord');
 
-bagAnim.play();
+            container.classList.toggle('on');
 
-// Bag open ke baad coding + button
-setTimeout(() => {
-    bagAnim.style.display = "none";
-    codingAnim.style.display = "block";
-    codingAnim.play();
-    startBtn.style.display = "block";
-}, 2500);
+            // Pull animation
+            cord.style.animation = 'none';
+            cord.offsetHeight; /* trigger reflow */
+            cord.style.animation = "pull 0.4s ease";
 
-function goToLogin() {
-    document.getElementById("introScreen").style.display = "none";
-    document.getElementById("loginPage").style.display = "block";
-}
-</script>
+            setTimeout(() => {
+                cord.style.animation = "swing 3s infinite ease-in-out";
+            }, 400);
+        }
+    </script>
 
 </body>
+
 </html>

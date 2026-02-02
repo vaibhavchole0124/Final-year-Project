@@ -27,7 +27,7 @@ from reportlab.lib.units import cm
 
 
 from flask import (
-    Flask, render_template, request, redirect, session, url_for, send_file
+    Flask, render_template, request, redirect, session, url_for, send_file, jsonify
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -798,13 +798,49 @@ def resend_otp():
         print("RESEND OTP ERROR:", e)
         return render_template("verify_otp.html", error="Unexpected error while resending OTP.")
 
-
-
-
-
-
-
 # ============================= SINGLE PREDICTION (HOME) ======================
+
+
+# Default values for fields not in the form (based on dataset modes/medians)
+DEFAULT_VALUES = {
+    "Age": 30,
+    "BusinessTravel": "Travel_Rarely",
+    "DailyRate": 802,
+    "Department": "Research & Development",
+    "DistanceFromHome": 9,
+    "Education": 3,
+    "EducationField": "Life Sciences",
+    "EnvironmentSatisfaction": 3,
+    "Gender": "Male",
+    "HourlyRate": 66,
+    "JobInvolvement": 3,
+    "JobLevel": 2,
+    "JobRole": "Research Scientist",
+    "JobSatisfaction": 3,
+    "MaritalStatus": "Single",
+    "MonthlyIncome": 6500,
+    "MonthlyRate": 14313,
+    "NumCompaniesWorked": 3,
+    "Over18": "Y",
+    "OverTime": "No",
+    "PercentSalaryHike": 15,
+    "PerformanceRating": 3,
+    "RelationshipSatisfaction": 3,
+    "StockOptionLevel": 1,
+    "TotalWorkingYears": 10,
+    "TrainingTimesLastYear": 3,
+    "WorkLifeBalance": 3,
+    "YearsAtCompany": 5,
+    "YearsInCurrentRole": 3,
+    "YearsSinceLastPromotion": 2,
+    "YearsWithCurrManager": 3,
+    "MaternityPaternityLeave": 0,
+    "WorkplaceHarassment": 0,
+    "RemoteWorkFrequency": 0,
+    "MentalHealthResources": 0,
+    "ProjectDeadlinePressure": 2,
+    "SkillDevelopmentHours": 5
+}
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -817,13 +853,20 @@ def index():
         try:
             row = {}
             for col in FEATURE_COLS:
-                value = request.form.get(col)
+                # Get from form, OR use default, OR None
+                val_from_form = request.form.get(col)
+                if val_from_form is None or val_from_form.strip() == "":
+                    # Try default
+                    value = DEFAULT_VALUES.get(col)
+                else:
+                    value = val_from_form
 
                 if col in NUMERIC_FEATURES:
                     try:
                         row[col] = float(value)
                     except Exception:
-                        row[col] = np.nan
+                        # logical fallback if default is also somehow missing/bad
+                        row[col] = 0.0 
                 else:
                     row[col] = value
 
@@ -871,7 +914,7 @@ def index():
                 # Sort absolute imp
                 # But we care about POSITIVE contribution to LEAVE (vals > 0)
                 # Let's take top 3 contributors
-                import pandas as pd
+                # import pandas as pd  <-- REMOVED: Caused UnboundLocalError
                 shap_df = pd.DataFrame(list(zip(feature_names, vals)), columns=['Feature', 'SHAP'])
                 # Filter positive (driving attrition)
                 shap_df = shap_df[shap_df['SHAP'] > 0].sort_values(by='SHAP', ascending=False).head(3)
@@ -1105,6 +1148,95 @@ def history():
 def dashboard():
     if not session.get("logged_in"):
         return redirect(url_for("login"))
+
+    # ============================= SIMULATOR (WHAT-IF) ===========================
+    pass
+
+@app.route("/simulation")
+def simulation():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+    return render_template("simulator.html")
+
+@app.route("/api/predict_simulation", methods=["POST"])
+def predict_simulation():
+    if not session.get("logged_in"):
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        data = request.json
+        
+        # Merge input with defaults to ensure all features exist
+        # We start with DEFAULT_VALUES copy, then update with user input
+        row = DEFAULT_VALUES.copy()
+        for k, v in data.items():
+            if k in row:
+                row[k] = v
+        
+        # Convert to DF
+        # Ensure Numeric types
+        for col in NUMERIC_FEATURES:
+            if col in row:
+                try:
+                    row[col] = float(row[col])
+                except:
+                    row[col] = 0.0
+
+        # --- SMART LOGIC FOR SIMULATION ---
+        # Ensure consistency so defaults don't mask risk
+        
+        # 1. If Age is young, TotalWorkingYears cannot be high
+        if row.get("Age", 30) < 25:
+            row["TotalWorkingYears"] = min(row.get("TotalWorkingYears", 0), 2)
+            row["JobLevel"] = 1 # Juniors are usually level 1
+            
+        # 2. YearsAtCompany constraints
+        tenure = row.get("YearsAtCompany", 5)
+        # YearsInCurrentRole can't exceed Tenure
+        if row.get("YearsInCurrentRole", 0) > tenure:
+            row["YearsInCurrentRole"] = tenure
+        # YearsWithCurrManager can't exceed Tenure
+        if row.get("YearsWithCurrManager", 0) > tenure:
+            row["YearsWithCurrManager"] = tenure
+        # TotalWorkingYears must be >= Tenure
+        if row.get("TotalWorkingYears", 0) < tenure:
+            row["TotalWorkingYears"] = tenure
+            
+        # 3. If JobSatisfaction is low, likely JobInvolvement drops too (heuristic)
+        if row.get("JobSatisfaction", 3) == 1:
+            row["JobInvolvement"] = min(row.get("JobInvolvement", 3), 2)
+
+        df = pd.DataFrame([row])
+        
+        # Predict
+        if preprocessor is None or model is None:
+            return jsonify({"error": "Model not loaded"}), 500
+
+        X = preprocessor.transform(df)
+        prob = float(model.predict_proba(X)[0][1])
+        
+        # DEBUG LOGGING
+        print("------------- SIMULATION DEBUG -------------")
+        print(f"Input Features: {row}")
+        print(f"Predicted Probability: {prob}")
+        print("--------------------------------------------")
+        
+        risk_score = round(prob * 100, 2)
+        
+        label = "Likely to LEAVE" if prob >= 0.5 else "Likely to STAY"
+        
+        return jsonify({
+            "risk_score": risk_score,
+            "probability": prob,
+            "label": label
+        })
+
+    except Exception as e:
+        print(f"Simulation Error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# ============================= DASHBOARD =====================================
 
     # ... rest of your dashboard code unchanged from earlier ...
 

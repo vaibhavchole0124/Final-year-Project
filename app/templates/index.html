@@ -92,6 +92,7 @@
 
         <div>
             <a class="active" href="/">Single</a>
+            <a href="/simulation">Simulator</a>
             <a href="/bulk">Bulk</a>
             <a href="/dashboard">Dashboard</a>
             <a href="/logout">Logout</a>
@@ -306,6 +307,10 @@
                     </div>
                     {% endif %}
 
+                    {% elif prediction and prediction.error %}
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> {{ prediction.error }}
+                    </div>
                     {% else %}
                     <p class="text-muted">Submit form to see prediction</p>
                     {% endif %}

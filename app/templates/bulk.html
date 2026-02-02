@@ -25,6 +25,7 @@
 
         <div class="ms-auto d-flex gap-2">
             <a href="/" class="btn btn-outline-light btn-sm">Single</a>
+            <a href="/simulation" class="btn btn-outline-light btn-sm">Simulator</a>
             <a href="/bulk" class="btn btn-warning btn-sm fw-bold">Bulk</a>
             <a href="/dashboard" class="btn btn-outline-light btn-sm">Dashboard</a>
             <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
@@ -287,7 +288,7 @@
             }]
             },
             options: {
-            plugins: { legend: { position: "bottom" }}
+            plugins: { legend: { position: "bottom" } }
         }
         });
     }) ();
@@ -301,8 +302,8 @@
             const values = [
                 {{ summary.risk_low }},
             {{ summary.risk_med }},
-        {{ summary.risk_high }},
-        {{ summary.risk_crit }}
+        { { summary.risk_high } },
+        { { summary.risk_crit } }
             ];
 
         new Chart(ctx, {
@@ -315,9 +316,9 @@
                 }]
             },
             options: {
-                plugins: { legend: { display: false }},
+                plugins: { legend: { display: false } },
                 scales: {
-                    y: { beginAtZero: true, ticks: { precision: 0 }}
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
                 }
             }
         });
