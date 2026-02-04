@@ -8,114 +8,57 @@
     <!-- BOOTSTRAP + ICONS + CHART.JS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css">
-
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
-        /* ===== DASHBOARD BACKGROUND ===== */
-        body {
-            background: linear-gradient(180deg, #0f2a45, #0b3550);
-            min-height: 100vh;
-            color: #ffffff;
-        }
-
-        /* ===== NAVBAR SAME AS SINGLE ===== */
-        .navbar {
-            background: linear-gradient(90deg, #081a33, #0d3b66) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .navbar-brand {
-            color: #ffffff !important;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .navbar .btn {
-            border-radius: 20px;
-            padding: 4px 14px;
-            font-weight: 600;
-        }
-
-        .navbar .btn-outline-primary {
-            color: #ffffff;
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .navbar .btn-outline-primary:hover {
-            background: #f6b93b;
-            color: #000;
-            border-color: #f6b93b;
-        }
-
-        .navbar .btn-outline-danger {
-            color: #ff6b6b;
-            border-color: #ff6b6b;
-        }
-
-        .navbar .btn-outline-danger:hover {
-            background: #ff6b6b;
-            color: #fff;
-        }
-
-        /* ===== PAGE TITLE ===== */
-        .text-center h2 {
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        .text-center p {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* ===== WHITE CONTENT CARDS ===== */
-        .tab-card {
-            background: #ffffff;
-            color: #000000;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-        }
-
-        /* ===== SUMMARY BOXES ===== */
-        .small-box {
-            padding: 20px;
-            color: white;
-            border-radius: 14px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .bg-green {
-            background: #28a745;
-        }
-
-        .bg-red {
-            background: #dc3545;
-        }
-
-        .bg-blue {
-            background: #0d6efd;
-        }
-
-        .bg-orange {
-            background: #fd7e14;
-        }
-
-        /* ===== TABS ===== */
+        /* Override defaults for Dashboard */
         .nav-tabs {
             border-bottom: none;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .nav-tabs .nav-link {
-            border: none;
-            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: #fff;
+            padding: 8px 20px;
             font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .nav-tabs .nav-link.active {
-            background: #f6b93b;
+            background: #f1c40f !important;
             color: #000 !important;
-            border-radius: 20px;
+            border-color: #f1c40f;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.4);
+        }
+
+        .small-box {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .small-box h4 {
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin: 5px 0;
+            color: #fff;
+        }
+
+        .small-box p {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            color: #fff;
+            margin-bottom: 0;
         }
     </style>
 
@@ -126,30 +69,26 @@
 
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg px-4 py-2 shadow-sm"
-        style="background:linear-gradient(180deg,#0f2a45,#0b3550);">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-premium">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" height="40" style="margin-right:10px;">
+                HR Attrition Dashboard
+            </a>
 
+            <div class="d-flex gap-2">
+                <a href="/" class="btn btn-outline-light btn-sm">Single</a>
+                <a href="/simulation" class="btn btn-outline-light btn-sm">Simulator</a>
+                <a href="/bulk" class="btn btn-outline-light btn-sm">Bulk</a>
+                <a href="/dashboard" class="btn btn-warning btn-sm fw-bold">Dashboard</a>
 
-        <a class="navbar-brand fw-bold text-white d-flex align-items-center" href="/">
-            <img src="{{ url_for('static', filename='logo.png') }}" style="height:40px; margin-right:10px;">
-            HR Attrition Dashboard
-        </a>
-
-
-        <div class="ms-auto d-flex gap-2">
-            <a href="/" class="btn btn-outline-primary btn-sm">Single</a>
-            <a href="/simulation" class="btn btn-outline-primary btn-sm">Simulator</a>
-            <a href="/bulk" class="btn btn-outline-primary btn-sm">Bulk</a>
-            <a href="/dashboard" class="btn btn-outline-primary btn-sm">Dashboard</a>
-
-            {% if session.get('logged_in') %}
-            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
-            {% else %}
-            <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Login</a>
-            {% endif %}
-
+                {% if session.get('logged_in') %}
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Login</a>
+                {% endif %}
+            </div>
         </div>
-
     </nav>
 
 
@@ -161,30 +100,30 @@
         </div>
 
         <!-- SUMMARY CARDS -->
-        <div class="row mb-4">
+        <div class="row mb-4 animate-up">
             <div class="col-lg-3 col-md-6 mb-2">
-                <div class="small-box bg-green">
+                <div class="small-box" style="border-top: 5px solid #28a745;">
                     <h4>{{ stay_pct }}%</h4>
                     <p>Employees Staying</p>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 mb-2">
-                <div class="small-box bg-red">
+                <div class="small-box" style="border-top: 5px solid #dc3545;">
                     <h4>{{ leave_pct }}%</h4>
                     <p>Employees Leaving</p>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 mb-2">
-                <div class="small-box bg-blue">
+                <div class="small-box" style="border-top: 5px solid #0d6efd;">
                     <h4>{{ models_compared }}</h4>
                     <p>Models Compared</p>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 mb-2">
-                <div class="small-box bg-orange">
+                <div class="small-box" style="border-top: 5px solid #f1c40f;">
                     <h4>{{ best_accuracy }}%</h4>
                     <p>Best Model Accuracy</p>
                 </div>
@@ -209,430 +148,585 @@
 
             <!-- OVERVIEW TAB -->
             <div class="tab-pane fade show active" id="overview">
-                <div class="tab-card">
-
-                    <h4 class="fw-bold mb-3">Overall Attrition</h4>
-                    <canvas id="overallChart" style="width:700px; height:680px;"></canvas>
-
-                    <h4 class="fw-bold mb-4 mt-4">Attrition by Department</h4>
-                    <canvas id="deptChart" style="width:700px; height:680px;"></canvas>
-
-                    <h4 class="fw-bold mb-4 mt-4">Attrition by Job Role</h4>
-                    <canvas id="jobChart" style="width:700px; height:680px;"></canvas>
-
-                    <h4 class="fw-bold mb-4 mt-4">Attrition by Tenure</h4>
-                    <canvas id="tenureChart" style="width:700px; height:680px;"></canvas>
-
-                    <h4 class="fw-bold mb-4 mt-4">Attrition by Gender</h4>
-                    <canvas id="genderChart" style="width:700px; height:680px;"></canvas>
-
-                    <h4 class="fw-bold mb-4 mt-4">Attrition by OverTime</h4>
-                    <canvas id="overtimeChart" style="width:700px; height:680px;"></canvas>
+                <div class="glass-card">
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Overall Attrition</h4>
+                            <div class="chart-container">
+                                <canvas id="overallChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Attrition by Department</h4>
+                            <div class="chart-container">
+                                <canvas id="deptChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Attrition by Job Role</h4>
+                            <div class="chart-container">
+                                <canvas id="jobChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Attrition by Tenure</h4>
+                            <div class="chart-container">
+                                <canvas id="tenureChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Attrition by Gender</h4>
+                            <div class="chart-container">
+                                <canvas id="genderChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Attrition by OverTime</h4>
+                            <div class="chart-container">
+                                <canvas id="overtimeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
             <!-- RISK TAB -->
             <div class="tab-pane fade" id="risk">
-                <div class="tab-card">
-                    <h4 class="fw-bold">Risk Distribution</h4>
-                    <canvas id="riskBinsChart"></canvas>
-
-                    <h4 class="fw-bold mt-4">Risk Segmentation</h4>
-                    <canvas id="riskSegChart"></canvas>
+                <div class="glass-card">
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Risk Distribution</h4>
+                            <div class="chart-container">
+                                <canvas id="riskBinsChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Risk Segmentation</h4>
+                            <div class="chart-container">
+                                <canvas id="riskSegChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
             <!-- MODEL TAB -->
             <div class="tab-pane fade" id="models">
-                <div class="tab-card">
-                    <h4 class="fw-bold">Model Comparison</h4>
+                <div class="glass-card">
+                    <h4 class="dashboard-section-title">Model Comparison Metrics</h4>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered table-striped table-dark">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Accuracy (%)</th>
+                                    <th>F1 Score (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for m in model_rows %}
+                                <tr>
+                                    <td>{{ m.Model }}</td>
+                                    <td>{{ m.Accuracy }}</td>
+                                    <td>{{ m.F1_macro }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Model</th>
-                                <th>Accuracy (%)</th>
-                                <th>F1 Score (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for m in model_rows %}
-                            <tr>
-                                <td>{{ m.Model }}</td>
-                                <td>{{ m.Accuracy }}</td>
-                                <td>{{ m.F1_macro }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
-                    <h5 class="fw-bold mt-4">Accuracy Comparison</h5>
-                    <canvas id="modelAccChart"></canvas>
-
-                    <h5 class="fw-bold mt-4">F1 Score Comparison</h5>
-                    <canvas id="modelF1Chart"></canvas>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <h5 class="dashboard-section-title">Accuracy Comparison</h5>
+                            <div class="chart-container">
+                                <canvas id="modelAccChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h5 class="dashboard-section-title">F1 Score Comparison</h5>
+                            <div class="chart-container">
+                                <canvas id="modelF1Chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
             <!-- FEATURE IMPORTANCE TAB -->
             <div class="tab-pane fade" id="featureimportance">
-                <div class="tab-card">
-                    <h4 class="fw-bold">Top Feature Importance</h4>
-                    <canvas id="fiChart"></canvas>
+                <div class="glass-card">
+                    <h4 class="dashboard-section-title">Top Feature Importance</h4>
+                    <div class="chart-container" style="height: 500px;"> <!-- Taller for many features -->
+                        <canvas id="fiChart"></canvas>
+                    </div>
                 </div>
             </div>
 
 
             <!-- SALARY TAB -->
             <div class="tab-pane fade" id="salary">
-                <div class="tab-card">
-                    <h4 class="fw-bold">Salary vs Attrition</h4>
-                    <canvas id="salaryChart"></canvas>
-
-                    <h4 class="fw-bold mt-4">Department Health Score</h4>
-                    <canvas id="deptHealthChart"></canvas>
+                <div class="glass-card">
+                    <div class="mb-5">
+                        <h4 class="dashboard-section-title">Salary vs Attrition</h4>
+                        <div class="chart-container" style="height: 450px;">
+                            <canvas id="salaryChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="dashboard-section-title">Department Health Score</h4>
+                        <div class="chart-container">
+                            <canvas id="deptHealthChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
             <!-- FORECAST TAB -->
             <div class="tab-pane fade" id="forecast">
-                <div class="tab-card">
-                    <h4 class="fw-bold">Attrition Forecast (Next 6 Months)</h4>
-                    <canvas id="forecastChart"></canvas>
+                <div class="glass-card">
+                    <h4 class="dashboard-section-title">Attrition Forecast (Next 6 Months)</h4>
+                    <div class="chart-container" style="height: 400px;">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
                 </div>
             </div>
 
 
             <!-- ================= INSIGHTS TAB ================= -->
             <div class="tab-pane fade" id="insights">
-                <div class="tab-card">
+                <div class="glass-card">
+                    <h3 class="dashboard-section-title">🧠 Employee Insights</h3>
 
-                    <h3 class="fw-bold mb-4">🧠 Employee Insights</h3>
-
-                    <div class="row g-3">
-
-                        <!-- KPI CARDS -->
-                        <div class="col-md-4">
-                            <div class="p-3 rounded shadow-sm" style="background:#ffe5e5;">
-                                <h5>Low Job Satisfaction</h5>
-                                <h2>{{ kpi_low_satisfaction }}</h2>
+                    <!-- KPI CARDS GRID -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="p-3 rounded shadow-sm text-dark h-100"
+                                style="background:#ffe5e5; border-left: 4px solid #dc3545;">
+                                <small class="fw-bold text-uppercase">Low Satisfaction</small>
+                                <h3 class="mb-0">{{ kpi_low_satisfaction }}</h3>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="p-3 rounded shadow-sm" style="background:#fff3cd;">
-                                <h5>Poor Work-Life Balance</h5>
-                                <h2>{{ kpi_poor_wlb }}</h2>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="p-3 rounded shadow-sm text-dark h-100"
+                                style="background:#fff3cd; border-left: 4px solid #ffc107;">
+                                <small class="fw-bold text-uppercase">Poor WLB</small>
+                                <h3 class="mb-0">{{ kpi_poor_wlb }}</h3>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="p-3 rounded shadow-sm" style="background:#e0f7fa;">
-                                <h5>Overtime Employees</h5>
-                                <h2>{{ kpi_overtime }}</h2>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="p-3 rounded shadow-sm text-dark h-100"
+                                style="background:#e0f7fa; border-left: 4px solid #0dcaf0;">
+                                <small class="fw-bold text-uppercase">Overtime</small>
+                                <h3 class="mb-0">{{ kpi_overtime }}</h3>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="p-3 rounded shadow-sm" style="background:#e8eaf6;">
-                                <h5>No Promotion (5+ yrs)</h5>
-                                <h2>{{ kpi_no_promo }}</h2>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="p-3 rounded shadow-sm text-dark h-100"
+                                style="background:#e8eaf6; border-left: 4px solid #3f51b5;">
+                                <small class="fw-bold text-uppercase">No Promotion (5yr)</small>
+                                <h3 class="mb-0">{{ kpi_no_promo }}</h3>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="p-3 rounded shadow-sm" style="background:#e8f5e9;">
-                                <h5>Low Salary Employees</h5>
-                                <h2>{{ kpi_low_salary }}</h2>
+                        <div class="col-lg-2 col-md-4 col-sm-6">
+                            <div class="p-3 rounded shadow-sm text-dark h-100"
+                                style="background:#e8f5e9; border-left: 4px solid #4caf50;">
+                                <small class="fw-bold text-uppercase">Low Salary</small>
+                                <h3 class="mb-0">{{ kpi_low_salary }}</h3>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Stability Bar Chart -->
-                        <div class="col-md-12">
-                            <canvas id="stabilityChart"></canvas>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <h4 class="dashboard-section-title">Stability Trend</h4>
+                            <div class="chart-container">
+                                <canvas id="stabilityChart"></canvas>
+                            </div>
                         </div>
 
                         <!-- AGE & INCOME -->
-                        <div class="col-md-6">
-                            <canvas id="ageChart"></canvas>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Age Distribution</h4>
+                            <div class="chart-container">
+                                <canvas id="ageChart"></canvas>
+                            </div>
                         </div>
-
-                        <div class="col-md-6">
-                            <canvas id="incomeChart"></canvas>
+                        <div class="col-lg-6">
+                            <h4 class="dashboard-section-title">Income Distribution</h4>
+                            <div class="chart-container">
+                                <canvas id="incomeChart"></canvas>
+                            </div>
                         </div>
 
                         <!-- Doughnut Charts -->
-                        <div class="col-md-6">
-                            <canvas id="eduChart"></canvas>
+                        <div class="col-lg-4">
+                            <h4 class="dashboard-section-title">Education</h4>
+                            <div class="chart-container">
+                                <canvas id="eduChart"></canvas>
+                            </div>
                         </div>
-
-                        <div class="col-md-6">
-                            <canvas id="joblevelChart"></canvas>
+                        <div class="col-lg-4">
+                            <h4 class="dashboard-section-title">Job Level</h4>
+                            <div class="chart-container">
+                                <canvas id="joblevelChart"></canvas>
+                            </div>
                         </div>
 
                         <!-- Department Ranking -->
-                        <div class="col-md-12">
-                            <canvas id="deptRankChart"></canvas>
+                        <div class="col-lg-4">
+                            <h4 class="dashboard-section-title">Dept Rank</h4>
+                            <div class="chart-container">
+                                <canvas id="deptRankChart"></canvas>
+                            </div>
                         </div>
-
                     </div>
                 </div>
+
             </div>
-
         </div>
-    </div>
 
 
-    <!-- JAVASCRIPT -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- JAVASCRIPT -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        /* ========= OVERVIEW CHARTS (fixed size) ========= */
+        <script>
+            /* Common Chart Defaults */
+            Chart.defaults.color = "#333"; // Dark grey for labels/numbers on light background
+            Chart.defaults.font.family = "'Inter', sans-serif";
 
-        new Chart(overallChart, {
-            type: "pie",
-            data: {
-                labels: {{ overall_labels| tojson }},
-            datasets: [{
-                data: {{ overall_values| tojson }},
-            backgroundColor: ["#28a745", "#dc3545"]
-            }]
-        },
-            options: {
-            responsive: false,
-            maintainAspectRatio: false
-        }
-    });
+            const baseOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            color: '#333',
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded'
+                        }
+                    }
+                }
+            };
 
-        new Chart(deptChart, {
-            type: "bar",
-            data: {
-                labels: {{ dept_labels| tojson }},
-            datasets: [{
-                data: {{ dept_values| tojson }},
-            backgroundColor: "#0d6efd"
-            }]
-        },
-            options: {
-            responsive: false,
-            maintainAspectRatio: false
-        }
-    });
+            const barOptions = {
+                ...baseOptions,
+                scales: {
+                    x: {
+                        display: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { color: '#333' }
+                    },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { color: '#333' }
+                    }
+                }
+            };
 
-        new Chart(jobChart, {
-            type: "bar",
-            data: {
-                labels: {{ job_labels| tojson }},
-            datasets: [{
-                data: {{ job_values| tojson }},
-            backgroundColor: "#6610f2"
-            }]
-        },
-            options: {
-            responsive: false,
-            maintainAspectRatio: false
-        }
-    });
+            const pieOptions = {
+                ...baseOptions,
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                }
+            };
 
-        new Chart(tenureChart, {
-            type: "line",
-            data: {
-                labels: {{ tenure_labels| tojson }},
-            datasets: [{
-                data: {{ tenure_values| tojson }},
-            borderColor: "#fd7e14",
-            fill: false
-            }]
-        },
-            options: {
-            responsive: false,
-            maintainAspectRatio: false
-        }
-    });
+            /* ========= OVERVIEW CHARTS ========= */
 
-        new Chart(genderChart, {
-            type: "bar",
-            data: {
-                labels: {{ gender_labels| tojson }},
-            datasets: [{
-                data: {{ gender_values| tojson }},
-            backgroundColor: "#20c997"
-            }]
-        },
-            options: {
-            responsive: false,
-            maintainAspectRatio: false
-        }
-    });
+            new Chart(document.getElementById("overallChart"), {
+                type: "pie",
+                data: {
+                    labels: {{ overall_labels | tojson }},
+                datasets: [{
+                    data: {{ overall_values | tojson }},
+                backgroundColor: ["#28a745", "#dc3545"]
+                    }]
+                },
+                options: pieOptions
+            });
 
-        new Chart(overtimeChart, {
-            type: "bar",
-            data: {
-                labels: {{ overtime_labels| tojson }},
-            datasets: [{
-                data: {{ overtime_values| tojson }},
-            backgroundColor: "#dc3545"
-            }]
-        },
-            options: {
-            responsive: false,
-            maintainAspectRatio: false
-        }
-    });
+            new Chart(document.getElementById("deptChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ dept_labels| tojson }},
+                datasets: [{
+                    data: {{ dept_values| tojson }},
+                backgroundColor: "#0d6efd"
+                    }]
+                },
+                options: barOptions
+            });
 
-        /* ========= OTHER TABS (can stay responsive) ========= */
+            new Chart(document.getElementById("jobChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ job_labels| tojson }},
+                datasets: [{
+                    data: {{ job_values| tojson }},
+                backgroundColor: "#6610f2"
+                    }]
+                },
+                options: barOptions
+            });
 
-        new Chart(riskBinsChart, {
-            type: "bar",
-            data: {
-                labels: {{ risk_bins_labels| tojson }},
-            datasets: [{
-                data: {{ risk_bins_values| tojson }},
-            backgroundColor: "#0d6efd"
-            }]
-        }
-    });
+            new Chart(document.getElementById("tenureChart"), {
+                type: "line",
+                data: {
+                    labels: {{ tenure_labels| tojson }},
+                datasets: [{
+                    data: {{ tenure_values| tojson }},
+                borderColor: "#fd7e14",
+                fill: false
+                    }]
+                },
+                options: barOptions
+            });
 
-        new Chart(riskSegChart, {
-            type: "bar",
-            data: {
-                labels: {{ risk_seg_labels| tojson }},
-            datasets: [{
-                data: {{ risk_seg_values| tojson }},
-            backgroundColor: ["#28a745", "#ffc107", "#fd7e14", "#dc3545"]
-            }]
-        }
-    });
+            new Chart(document.getElementById("genderChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ gender_labels| tojson }},
+                datasets: [{
+                    data: {{ gender_values| tojson }},
+                backgroundColor: "#20c997"
+                    }]
+                },
+                options: barOptions
+            });
 
-        new Chart(modelAccChart, {
-            type: "bar",
-            data: {
-                labels: {{ model_names| tojson }},
-            datasets: [{
-                data: {{ model_acc_values| tojson }},
-            backgroundColor: "#0d6efd"
-            }]
-        }
-    });
+            new Chart(document.getElementById("overtimeChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ overtime_labels| tojson }},
+                datasets: [{
+                    data: {{ overtime_values| tojson }},
+                backgroundColor: "#dc3545"
+                    }]
+                },
+                options: barOptions
+            });
 
-        new Chart(modelF1Chart, {
-            type: "bar",
-            data: {
-                labels: {{ model_names| tojson }},
-            datasets: [{
-                data: {{ model_f1_values| tojson }},
-            backgroundColor: "#6610f2"
-            }]
-        }
-    });
+            /* ========= RISK TAB ========= */
 
-        new Chart(fiChart, {
-            type: "bar",
-            data: {
-                labels: {{ fi_labels| tojson }},
-            datasets: [{
-                data: {{ fi_values| tojson }},
-            backgroundColor: "#20c997"
-            }]
-        }
-    });
+            new Chart(document.getElementById("riskBinsChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ risk_bins_labels| tojson }},
+                datasets: [{
+                    label: "Employee Count",
+                    data: {{ risk_bins_values | tojson }},
+                backgroundColor: "#0d6efd"
+                }]
+                },
+                options: barOptions
+            });
 
-        new Chart(salaryChart, {
-            type: "scatter",
-            data: {
-                datasets: [
-                    { label: "Leave", data: {{ salary_leave_values| tojson }
-        }, backgroundColor: "#dc3545" },
-            { label: "Stay", data: {{ salary_stay_values| tojson }}, backgroundColor: "#28a745" }
-            ]
-        }
-    });
+            new Chart(document.getElementById("riskSegChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ risk_seg_labels| tojson }},
+                datasets: [{
+                    label: "Category Count",
+                    data: {{ risk_seg_values | tojson }},
+                backgroundColor: ["#28a745", "#ffc107", "#fd7e14", "#dc3545"]
+                }]
+                },
+                options: barOptions
+            });
 
-        new Chart(deptHealthChart, {
-            type: "bar",
-            data: {
-                labels: {{ dept_health_labels| tojson }},
-            datasets: [{
-                data: {{ dept_health_values| tojson }},
-            backgroundColor: "#0d6efd"
-            }]
-        }
-    });
+            /* ========= MODELS TAB ========= */
 
-        new Chart(forecastChart, {
-            type: "line",
-            data: {
-                labels: {{ forecast_labels| tojson }},
-            datasets: [{
-                label: "Forecast",
-                data: {{ forecast_values| tojson }},
-            borderColor: "#0d6efd",
-            backgroundColor: "rgba(13,110,253,0.3)"
-            }]
-        }
-    });
+            new Chart(document.getElementById("modelAccChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ model_names| tojson }},
+                datasets: [{
+                    data: {{ model_acc_values| tojson }},
+                backgroundColor: "#0d6efd"
+                    }]
+                },
+                options: barOptions
+            });
 
-        // Stability Bar Chart
-        new Chart(document.getElementById("stabilityChart"), {
-            type: "bar",
-            data: {
-                labels: {{ stability_labels| tojson }},
-            datasets: [{
-                data: {{ stability_values| tojson }},
-            backgroundColor: ["#ff9999", "#ffe699", "#99e6ff", "#b3b3ff", "#c6ffb3"]
-            }]
-        }
-    });
+            new Chart(document.getElementById("modelF1Chart"), {
+                type: "bar",
+                data: {
+                    labels: {{ model_names| tojson }},
+                datasets: [{
+                    data: {{ model_f1_values| tojson }},
+                backgroundColor: "#6610f2"
+                    }]
+                },
+                options: barOptions
+            });
 
-        // Age Chart
-        new Chart(ageChart, {
-            type: "bar",
-            data: {
-                labels: {{ age_bins| tojson }},
-            datasets: [{ data: {{ age_counts| tojson }}, backgroundColor: "#a29bfe" }]
-        }
-    });
+            /* ========= FEATURE IMPORTANCE ========= */
 
-        // Income Chart
-        new Chart(incomeChart, {
-            type: "bar",
-            data: {
-                labels: {{ income_bins| tojson }},
-            datasets: [{ data: {{ income_counts| tojson }}, backgroundColor: "#ffb74d" }]
-        }
-    });
+            new Chart(document.getElementById("fiChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ fi_labels | tojson }},
+                datasets: [{
+                    label: "Importance Score",
+                    data: {{ fi_values | tojson }},
+                backgroundColor: "#20c997",
+                borderRadius: 5
+                    }]
+                },
+                options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#333' } }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        ticks: { color: '#333', font: { size: 10 } },
+                        grid: { display: false }
+                    },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        ticks: { color: '#333' },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+            });
 
-        // Education Doughnut
-        new Chart(eduChart, {
-            type: "doughnut",
-            data: {
-                labels: {{ edu_labels| tojson }},
-            datasets: [{ data: {{ edu_values| tojson }} }]
-        }
-    });
+            /* ========= SALARY TAB ========= */
 
-        // Job Level Doughnut
-        new Chart(joblevelChart, {
-            type: "doughnut",
-            data: {
-                labels: {{ joblevel_labels| tojson }},
-            datasets: [{ data: {{ joblevel_values| tojson }} }]
-        }
-    });
+            const salaryLeaveData = {{ salary_leave_values | tojson }}.map((v, i) => ({ x: i, y: v }));
+            const salaryStayData = {{ salary_stay_values | tojson }}.map((v, i) => ({ x: i, y: v }));
 
-        // Dept Ranking
-        new Chart(deptRankChart, {
-            type: "bar",
-            data: {
-                labels: {{ dept_names| tojson }},
-            datasets: [{ data: {{ dept_attrition| tojson }}, backgroundColor: "#ff6f61" }]
-        }
-    });
-    </script>
+            new Chart(document.getElementById("salaryChart"), {
+                type: "scatter",
+                data: {
+                    datasets: [
+                        { label: "Leave", data: salaryLeaveData, backgroundColor: "#dc3545" },
+                        { label: "Stay", data: salaryStayData, backgroundColor: "#28a745" }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#333' } }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: { display: true, text: 'Employee Index', color: '#333' },
+                            ticks: { color: '#333' },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        y: {
+                            display: true,
+                            title: { display: true, text: 'Monthly Income', color: '#333' },
+                            ticks: { color: '#333' },
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById("deptHealthChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ dept_health_labels| tojson }},
+                datasets: [{
+                    data: {{ dept_health_values| tojson }},
+                backgroundColor: "#0d6efd"
+                    }]
+                },
+                options: barOptions
+            });
+
+            /* ========= FORECAST TAB ========= */
+
+            new Chart(document.getElementById("forecastChart"), {
+                type: "line",
+                data: {
+                    labels: {{ forecast_labels| tojson }},
+                datasets: [{
+                    label: "Forecast",
+                    data: {{ forecast_values| tojson }},
+                borderColor: "#0d6efd",
+                backgroundColor: "rgba(13,110,253,0.3)"
+                    }]
+                },
+                options: barOptions
+            });
+
+            /* ========= INSIGHTS TAB ========= */
+
+            new Chart(document.getElementById("stabilityChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ stability_labels| tojson }},
+                datasets: [{
+                    data: {{ stability_values| tojson }},
+                backgroundColor: ["#ff9999", "#ffe699", "#99e6ff", "#b3b3ff", "#c6ffb3"]
+                    }]
+                },
+                options: barOptions
+            });
+
+            new Chart(document.getElementById("ageChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ age_bins| tojson }},
+                datasets: [{ data: {{ age_counts| tojson }}, backgroundColor: "#a29bfe" }]
+                },
+                options: barOptions
+            });
+
+            new Chart(document.getElementById("incomeChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ income_bins| tojson }},
+                datasets: [{ data: {{ income_counts| tojson }}, backgroundColor: "#ffb74d" }]
+                },
+                options: barOptions
+            });
+
+            new Chart(document.getElementById("eduChart"), {
+                type: "doughnut",
+                data: {
+                    labels: {{ edu_labels| tojson }},
+                datasets: [{ data: {{ edu_values| tojson }} }]
+                },
+                options: pieOptions
+            });
+
+            new Chart(document.getElementById("joblevelChart"), {
+                type: "doughnut",
+                data: {
+                    labels: {{ joblevel_labels| tojson }},
+                datasets: [{ data: {{ joblevel_values| tojson }} }]
+                },
+                options: pieOptions
+            });
+
+            new Chart(document.getElementById("deptRankChart"), {
+                type: "bar",
+                data: {
+                    labels: {{ dept_names| tojson }},
+                datasets: [{ data: {{ dept_attrition| tojson }}, backgroundColor: "#ff6f61" }]
+                },
+                options: barOptions
+            });
+        </script>
 
 </body>
 

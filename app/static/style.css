@@ -24,6 +24,47 @@ body {
     box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
 }
 
+/* PREMIUM DARK NAVBAR (Standardized) */
+.navbar-premium {
+    background: linear-gradient(180deg, #0f2a45, #0b3550) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 1rem 1.5rem;
+}
+
+.navbar-premium .navbar-brand {
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-premium .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.navbar-premium .nav-link:hover,
+.navbar-premium .nav-link.active {
+    color: #ffffff !important;
+}
+
+.navbar-premium .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.navbar-premium .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-color: #fff;
+}
+
+
 .navbar-custom .navbar-brand {
     font-weight: 700;
     letter-spacing: 0.02em;
@@ -118,10 +159,21 @@ body {
     box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
 }
 
-.bg-green  { background: linear-gradient(135deg, #16a34a, #22c55e); }
-.bg-red    { background: linear-gradient(135deg, #dc2626, #ef4444); }
-.bg-blue   { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-.bg-orange { background: linear-gradient(135deg, #ea580c, #f97316); }
+.bg-green {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.bg-red {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.bg-blue {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.bg-orange {
+    background: linear-gradient(135deg, #ea580c, #f97316);
+}
 
 /* ---------------- FORMS (Single & Bulk) ---------------- */
 
@@ -218,29 +270,37 @@ form select:focus,
 
 /* 🟢 LOW RISK */
 .badge-low {
-    background-color: #dcfce7;   /* light green */
-    color: #166534;              /* dark green */
+    background-color: #dcfce7;
+    /* light green */
+    color: #166534;
+    /* dark green */
     border: 1px solid #bbf7d0;
 }
 
 /* 🟡 MEDIUM RISK */
 .badge-medium {
-    background-color: #fef9c3;   /* light yellow */
-    color: #854d0e;              /* dark amber */
+    background-color: #fef9c3;
+    /* light yellow */
+    color: #854d0e;
+    /* dark amber */
     border: 1px solid #fde68a;
 }
 
 /* 🟠 HIGH RISK */
 .badge-high {
-    background-color: #ffedd5;   /* light orange */
-    color: #c2410c;              /* deep orange */
+    background-color: #ffedd5;
+    /* light orange */
+    color: #c2410c;
+    /* deep orange */
     border: 1px solid #fdba74;
 }
 
 /* 🔴 CRITICAL RISK */
 .badge-critical {
-    background-color: #fee2e2;   /* light red */
-    color: #991b1b;              /* dark red */
+    background-color: #fee2e2;
+    /* light red */
+    color: #991b1b;
+    /* dark red */
     border: 1px solid #fecaca;
 }
 
@@ -279,53 +339,49 @@ canvas {
         padding: 14px 14px;
     }
 }
-/* ================= TAB-WISE CHART HEIGHT CONTROL ================= */
 
-/* 1️⃣ OVERVIEW TAB (pie, dept, job, tenure, gender, overtime) */
-#overview canvas {
-    height: 260px !important;      /* ⬅️ yaha se OVERVIEW ke charts ki height control karo */
-    max-height: 260px !important;
+/* ================= DASHBOARD REDESIGN ================= */
+
+.chart-container {
+    position: relative;
+    height: 350px;
+    /* Standardized professional height */
+    width: 100%;
 }
 
-/* 2️⃣ RISK TAB (risk distribution, risk segmentation) */
-#risk canvas {
-    height: 260px !important;      /* ⬅️ RISK tab ke charts */
-    max-height: 260px !important;
+.dashboard-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* 3️⃣ MODEL COMPARISON TAB (tables ke upar jo charts hain) */
-#models canvas {
-    height: 260px !important;      /* ⬅️ Model Acc / F1 charts */
-    max-height: 260px !important;
+.dashboard-section-title i {
+    color: #f1c40f;
 }
 
-/* 4️⃣ FEATURE IMPORTANCE TAB */
-#featureimportance canvas {
-    height: 260px !important;      /* ⬅️ Feature importance bar chart */
-    max-height: 260px !important;
+/* Specific canvas overrides for Chart.js responsiveness */
+canvas {
+    display: block;
+    box-sizing: border-box;
 }
 
-/* 5️⃣ SALARY TAB (Salary chart + Dept health) */
-#salary canvas {
-    height: 260px !important;      /* ⬅️ Salary & Dept Health */
-    max-height: 260px !important;
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 280px;
+    }
 }
 
-/* 6️⃣ FORECAST TAB */
-#forecast canvas {
-    height: 260px !important;      /* ⬅️ Forecast line chart */
-    max-height: 260px !important;
-}
-
-/* 7️⃣ INSIGHTS TAB (stability, age, income, donuts, dept rank) */
-#insights canvas {
-    height: 230px !important;      /* ⬅️ Insights ke charts thode chhote rakhe */
-    max-height: 230px !important;
-}
 /* ===== COMMON HEADER (Single + Bulk + Dashboard) ===== */
 .navbar {
     background: linear-gradient(135deg, #0b1f3a, #123b6d) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar-brand {
@@ -348,7 +404,7 @@ canvas {
 
 .navbar .btn-outline-primary {
     color: #ffffff;
-    border-color: rgba(255,255,255,0.4);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .navbar .btn-outline-primary:hover {
@@ -381,7 +437,7 @@ body {
 
 /* ===== FILE UPLOAD CARD ===== */
 .card {
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 14px;
 }
 
@@ -422,6 +478,7 @@ canvas {
     background: #ffffff;
     border-radius: 10px;
 }
+
 /* ===== BULK PAGE SAME AS SINGLE ===== */
 
 .bulk-bg {
@@ -431,7 +488,7 @@ canvas {
 
 .bulk-navbar {
     background: linear-gradient(90deg, #0b2345, #102f5a);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .bulk-bg .card {
@@ -445,6 +502,7 @@ canvas {
 .bulk-bg h5 {
     color: #111;
 }
+
 /* ===== COMMON DARK BLUE THEME (Single + Bulk same) ===== */
 
 body {
@@ -455,7 +513,7 @@ body {
 /* ===== HEADER / NAVBAR ===== */
 .navbar {
     background: linear-gradient(90deg, #0b2239, #0e355d) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .navbar-brand {
@@ -478,7 +536,7 @@ body {
 
 .navbar .btn-outline-primary {
     color: #ffffff;
-    border-color: rgba(255,255,255,0.4);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .navbar .btn-outline-primary:hover {
@@ -505,7 +563,7 @@ body {
 
 /* ===== FILE UPLOAD BAR ===== */
 .bulk-upload {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255, 255, 255, 0.12);
     border-radius: 14px;
     padding: 16px;
 }
@@ -520,5 +578,87 @@ body {
 
 .bulk-upload .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== PREMIUM GLASSMORPHEM & ANIMATIONS ===== */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-blur: blur(12px);
+    --gold-gradient: linear-gradient(135deg, #f1c40f, #f39c12);
+    --p-text: #ffffff;
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    padding: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+}
+
+.premium-btn {
+    background: var(--gold-gradient);
+    border: none;
+    color: #000 !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 24px;
+    border-radius: 50px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.premium-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(243, 156, 18, 0.4);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-up {
+    animation: slideInUp 0.6s ease-out forwards;
+}
+
+/* Specific text shadows for premium look */
+.glow-text {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Custom Scrollbar for Glass-style */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
 }

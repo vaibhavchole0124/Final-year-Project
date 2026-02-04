@@ -10,17 +10,19 @@
 
 <body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg px-4 py-3 bulk-navbar">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
-            <img src="{{ url_for('static', filename='logo.png') }}" height="32">
-            <span class="fw-bold text-white">EMPLOYEE ATTRITION SYSTEM</span>
-        </a>
-        <div class="ms-auto d-flex gap-2">
-            <a href="/" class="btn btn-outline-light btn-sm">Single</a>
-            <a href="/bulk" class="btn btn-outline-light btn-sm">Bulk</a>
-            <a href="/history" class="btn btn-warning btn-sm fw-bold">History</a>
-            <a href="/dashboard" class="btn btn-outline-light btn-sm">Dashboard</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-premium px-4 py-3">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" height="32">
+                <span class="text-white">EMPLOYEE ATTRITION SYSTEM</span>
+            </a>
+            <div class="ms-auto d-flex gap-2">
+                <a href="/" class="btn btn-outline-light btn-sm">Single</a>
+                <a href="/simulation" class="btn btn-outline-light btn-sm">Simulator</a>
+                <a href="/bulk" class="btn btn-outline-light btn-sm">Bulk</a>
+                <a href="/dashboard" class="btn btn-outline-light btn-sm">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+            </div>
         </div>
     </nav>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Panel | Employee Attrition</title>
@@ -12,189 +13,187 @@
 
     <style>
         /* ========== GLOBAL ========== */
-        body{
-            margin:0;
+        body {
+            margin: 0;
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top, #0b2d52 0%, #020617 70%);
-            color:#e5e7eb;
+            background: linear-gradient(180deg, #0b2d52, #020617);
+            min-height: 100vh;
+            color: #e5e7eb;
+        }
+
+        /* ========== GLASS SYSTEM ========== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         /* ========== SIDEBAR ========== */
-        .sidebar{
-            width:250px;
-            height:100vh;
-            position:fixed;
-            background:#020617;
-            padding:22px;
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            z-index: 1000;
         }
 
-        .sidebar h4{
-            color:#fff;
-            font-weight:800;
-            margin-bottom:32px;
-            font-size:18px;
+        .sidebar h5 {
+            color: #fff;
+            font-weight: 800;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .sidebar a{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            color:#cbd5f5;
-            text-decoration:none;
-            padding:12px 14px;
-            border-radius:12px;
-            margin-bottom:10px;
-            transition:0.25s;
-            font-weight:500;
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .sidebar a:hover,
-        .sidebar a.active{
-            background:#1e40af;
-            color:#fff;
+        .sidebar a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f1c40f;
+            transform: translateX(5px);
         }
 
-        .sidebar a.logout{
-            color:#f87171;
+        .sidebar a.logout {
+            color: #ff6b6b;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
         }
 
         /* ========== MAIN CONTENT ========== */
-        .main{
-            margin-left:250px;
-            padding:40px;
-            min-height:100vh;
+        .main {
+            margin-left: 250px;
+            padding: 40px;
+            min-height: 100vh;
         }
 
         /* ========== TOP BAR ========== */
-        .topbar{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:35px;
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
         }
 
-        .topbar h5{
-            font-weight:700;
-            color:#fff;
-            margin:0;
+        .topbar h5 {
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
         }
 
-        .top-actions a{
-            margin-left:10px;
-            padding:6px 14px;
-            border-radius:8px;
-            text-decoration:none;
-            font-weight:600;
-            font-size:14px;
+        /* Generic stats card for backward compatibility */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 24px;
         }
 
-        .btn-single{ background:#0ea5e9; color:#fff; }
-        .btn-bulk{ background:#facc15; color:#000; }
-        .btn-dashboard{ background:#22c55e; color:#000; }
-        .btn-logout{ background:#ef4444; color:#fff; }
-
-        /* ========== CARDS (DEMO LOOK) ========== */
-        .stats-card,
-        .action-card{
-            background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-            border-radius:18px;
-            padding:24px;
-            box-shadow:0 20px 40px rgba(0,0,0,0.45);
-            backdrop-filter: blur(8px);
-            transition:all 0.3s ease;
+        canvas {
+            max-height: 260px !important;
         }
 
-        .stats-card:hover,
-        .action-card:hover{
-            transform:translateY(-6px);
-            box-shadow:0 30px 60px rgba(0,0,0,0.6);
+        .table-dark {
+            background: transparent;
         }
 
-        .stats-card h2{
-            font-size:34px;
-            font-weight:800;
-            margin:12px 0 4px;
+        .table-dark th {
+            color: #93c5fd;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .stats-card p{
-            font-size:14px;
-            color:#cbd5f5;
-            margin:0;
+        .table-dark td {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 14px;
         }
+    </style>
 
-        .stats-card h5{
-            margin-bottom:14px;
-            font-weight:600;
-            color:#fff;
-        }
+    .table-dark th {
+    color: #93c5fd;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
 
-        /* ========== CHART FIX ========== */
-        canvas{
-            max-height:260px !important;
-        }
-
-        /* ========== TABLE FIX ========== */
-        .table-dark{
-            background:transparent;
-        }
-
-        .table-dark th{
-            color:#93c5fd;
-            font-weight:600;
-            border-bottom:1px solid rgba(255,255,255,0.15);
-        }
-
-        .table-dark td{
-            border-top:1px solid rgba(255,255,255,0.08);
-            font-size:14px;
-        }
-
+    .table-dark td {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 14px;
+    }
     </style>
 </head>
+
 <body>
 
-<!-- ========== SIDEBAR ========== -->
-<div class="sidebar">
-    <h5>Employee Attrition</h5>
+    <!-- ========== SIDEBAR ========== -->
+    <div class="sidebar">
+        <h5><i class="bi bi-shield-lock-fill text-warning me-2"></i>Admin Pro</h5>
 
-    <a href="/admin/dashboard" class="active">
-        <i class="bi bi-speedometer2"></i> Dashboard
-    </a>
-    <a href="/admin/users">
-        <i class="bi bi-people"></i> Manage Users
-    </a>
-    <a href="/admin/reports">
-        <i class="bi bi-bar-chart"></i> Prediction Reports
-    </a>
-    <a href="/admin/high-risk">
-        <i class="bi bi-exclamation-triangle"></i> High Risk Employees
-    </a>
-    <a href="/admin/logs">
-        <i class="bi bi-journal-text"></i> System Logs
-    </a>
-    <a href="/user/dashboard">
-        <i class="bi bi-person"></i> User Dashboard
-    </a>
-    <a href="/logout" class="logout">
-        <i class="bi bi-box-arrow-right"></i> Logout
-    </a>
-</div>
-
-<!-- ========== MAIN ========== -->
-<div class="main">
-
-    <!-- TOP BAR -->
-    <div class="topbar">
-        <h5>Admin Dashboard Overview</h5>
-        <div class="top-actions">
-      
-            
-        </div>
+        <a href="/admin/dashboard" class="{{ 'active' if request.path == '/admin/dashboard' else '' }}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="/admin/users" class="{{ 'active' if request.path == '/admin/users' else '' }}">
+            <i class="bi bi-people"></i> Manage Users
+        </a>
+        <a href="/admin/reports" class="{{ 'active' if request.path == '/admin/reports' else '' }}">
+            <i class="bi bi-bar-chart"></i> Prediction Reports
+        </a>
+        <a href="/admin/high-risk" class="{{ 'active' if request.path == '/admin/high_risk' else '' }}">
+            <i class="bi bi-exclamation-triangle"></i> High Risk
+        </a>
+        <a href="/admin/logs">
+            <i class="bi bi-journal-text"></i> System Logs
+        </a>
+        <a href="/user/dashboard">
+            <i class="bi bi-person"></i> User Dashboard
+        </a>
+        <a href="/logout" class="logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
     </div>
 
-    {% block content %}{% endblock %}
+    <!-- ========== MAIN ========== -->
+    <div class="main">
 
-</div>
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <h5>Admin Dashboard Overview</h5>
+            <div class="top-actions">
+
+
+            </div>
+        </div>
+
+        {% block content %}{% endblock %}
+
+    </div>
 
 </body>
+
 </html>

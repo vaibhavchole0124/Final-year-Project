@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <title>Employee Report Card</title>
@@ -7,9 +8,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body { background:#f5f6fa; }
+        body {
+            background: #f5f6fa;
+        }
 
-        .card-report { border-radius: 10px; padding: 0; }
+        .card-report {
+            border-radius: 10px;
+            padding: 0;
+        }
 
         .card-header-custom {
             background: transparent;
@@ -30,43 +36,65 @@
         }
 
         .badge-low {
-            background:#0e953e;
-            color:#ffffff;
-            border:1px solid #00fb58;
+            background: #0e953e;
+            color: #ffffff;
+            border: 1px solid #00fb58;
         }
 
         .badge-medium {
-            background:#ffdd00;
-            color:#f9f8f8;
-            border:1px solid #ffc800;
+            background: #ffdd00;
+            color: #f9f8f8;
+            border: 1px solid #ffc800;
         }
 
         .badge-high {
-            background:#ff4203;
-            color:#f8f7f7;
-            border:1px solid #ff4203;
+            background: #ff4203;
+            color: #f8f7f7;
+            border: 1px solid #ff4203;
         }
 
         .badge-critical {
-            background:#ff0707;
-            color:#fff9f9;
-            border:1px solid #fb0707;
+            background: #ff0707;
+            color: #fff9f9;
+            border: 1px solid #fb0707;
         }
 
-        .card-body-custom { padding: 22px; }
-        .rc-row { margin-bottom: 18px; }
-        .rc-title { font-weight:700; margin-bottom:8px; }
-        .rc-label { font-weight:600; color:#333; }
-        .rc-value { color:#111; }
-        .hr-line { border-top:1px solid #e9ecef; margin:18px 0; }
+        .card-body-custom {
+            padding: 22px;
+        }
 
-        .download-btns .btn { margin-left: 8px; }
+        .rc-row {
+            margin-bottom: 18px;
+        }
+
+        .rc-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .rc-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .rc-value {
+            color: #111;
+        }
+
+        .hr-line {
+            border-top: 1px solid #e9ecef;
+            margin: 18px 0;
+        }
+
+        .download-btns .btn {
+            margin-left: 8px;
+        }
 
         @media (max-width: 768px) {
-            .badge-risk-top { 
-                position: static; 
+            .badge-risk-top {
+                position: static;
                 display: inline-block;
-                margin-top:8px;
+                margin-top: 8px;
             }
         }
     </style>
@@ -74,135 +102,141 @@
 
 <body>
 
-<nav class="navbar navbar-light bg-white shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/">AI HR Attrition System</a>
-        <div class="ms-auto d-flex gap-2">
-
-    <a href="/" class="btn btn-outline-primary btn-sm">Single</a>
-    <a href="/bulk" class="btn btn-outline-primary btn-sm">Bulk</a>
-    <a href="/dashboard" class="btn btn-outline-primary btn-sm">Dashboard</a>
-
-    {% if session.get('logged_in') %}
-        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
-    {% else %}
-        <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Login</a>
-    {% endif %}
-
-    </div>
-
-    </div>
-</nav>
-
-<div class="container mt-4">
-    <div class="card card-report shadow-sm">
-
-        <div class="card-header-custom">
-            <h4 class="mb-0">
-                Employee Report Card #{{ row.EmployeeNumber }}
-            </h4>
-
-            <!-- RISK BADGE -->
-            {% set r = row.RiskBucket %}
-            {% if r %}
-                {% if r.lower() == 'low' %}
-                    <span class="badge-risk-top badge-low">Low Risk</span>
-                {% elif r.lower() == 'medium' %}
-                    <span class="badge-risk-top badge-medium">Medium Risk</span>
-                {% elif r.lower() == 'high' %}
-                    <span class="badge-risk-top badge-high">High Risk</span>
-                {% elif r.lower() == 'critical' %}
-                    <span class="badge-risk-top badge-critical">Critical Risk</span>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-premium mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" height="36" alt="Logo">
+                EMPLOYEE REPORT
+            </a>
+            <div class="d-flex gap-2">
+                <a href="/" class="btn btn-outline-light btn-sm">Single</a>
+                <a href="/simulation" class="btn btn-outline-light btn-sm">Simulator</a>
+                <a href="/bulk" class="btn btn-outline-light btn-sm">Bulk</a>
+                <a href="/dashboard" class="btn btn-outline-light btn-sm">Dashboard</a>
+                {% if session.get('logged_in') %}
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Login</a>
                 {% endif %}
-            {% endif %}
+            </div>
         </div>
+    </nav>
 
-        <div class="card-body card-body-custom">
+    <div class="container mt-4">
+        <div class="card card-report shadow-sm">
 
-            <!-- BASIC DETAILS -->
-            <div class="row rc-row">
-                <div class="col-md-6">
-                    <div class="rc-title">Basic Details</div>
+            <div class="card-header-custom">
+                <h4 class="mb-0">
+                    Employee Report Card #{{ row.EmployeeNumber }}
+                </h4>
 
-                    <div><span class="rc-label">Employee Number:</span> {{ row.EmployeeNumber }}</div>
-                    <div><span class="rc-label">Department:</span> {{ row.Department }}</div>
-                    <div><span class="rc-label">OverTime:</span> {{ row.OverTime }}</div>
-                    <div><span class="rc-label">Years at Company:</span> {{ row.YearsAtCompany }}</div>
-                </div>
-
-                <div class="col-md-6">
-                    <div style="visibility:hidden">placeholder</div>
-                    <div><span class="rc-label">Age:</span> {{ row.Age }}</div>
-                    <div><span class="rc-label">Job Role:</span> {{ row.JobRole }}</div>
-                    <div><span class="rc-label">Monthly Income:</span> {{ row.MonthlyIncome }}</div>
-                    <div><span class="rc-label">Years in Current Role:</span> {{ row.YearsInCurrentRole }}</div>
-                </div>
+                <!-- RISK BADGE -->
+                {% set r = row.RiskBucket %}
+                {% if r %}
+                {% if r.lower() == 'low' %}
+                <span class="badge-risk-top badge-low">Low Risk</span>
+                {% elif r.lower() == 'medium' %}
+                <span class="badge-risk-top badge-medium">Medium Risk</span>
+                {% elif r.lower() == 'high' %}
+                <span class="badge-risk-top badge-high">High Risk</span>
+                {% elif r.lower() == 'critical' %}
+                <span class="badge-risk-top badge-critical">Critical Risk</span>
+                {% endif %}
+                {% endif %}
             </div>
 
-            <div class="hr-line"></div>
+            <div class="card-body card-body-custom">
 
-            <!-- ATTRITION PREDICTION -->
-            <div class="row rc-row">
-                <div class="col-md-4">
-                    <div class="rc-title">Attrition Prediction</div>
-                    <div class="rc-label">Prediction:</div>
-                    <div class="rc-value">{{ row.AttritionPrediction }}</div>
+                <!-- BASIC DETAILS -->
+                <div class="row rc-row">
+                    <div class="col-md-6">
+                        <div class="rc-title">Basic Details</div>
+
+                        <div><span class="rc-label">Employee Number:</span> {{ row.EmployeeNumber }}</div>
+                        <div><span class="rc-label">Department:</span> {{ row.Department }}</div>
+                        <div><span class="rc-label">OverTime:</span> {{ row.OverTime }}</div>
+                        <div><span class="rc-label">Years at Company:</span> {{ row.YearsAtCompany }}</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div style="visibility:hidden">placeholder</div>
+                        <div><span class="rc-label">Age:</span> {{ row.Age }}</div>
+                        <div><span class="rc-label">Job Role:</span> {{ row.JobRole }}</div>
+                        <div><span class="rc-label">Monthly Income:</span> {{ row.MonthlyIncome }}</div>
+                        <div><span class="rc-label">Years in Current Role:</span> {{ row.YearsInCurrentRole }}</div>
+                    </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="rc-title">&nbsp;</div>
-                    <div class="rc-label">Probability:</div>
-                    <div class="rc-value">{{ row.AttritionProbability }}</div>
+                <div class="hr-line"></div>
+
+                <!-- ATTRITION PREDICTION -->
+                <div class="row rc-row">
+                    <div class="col-md-4">
+                        <div class="rc-title">Attrition Prediction</div>
+                        <div class="rc-label">Prediction:</div>
+                        <div class="rc-value">{{ row.AttritionPrediction }}</div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="rc-title">&nbsp;</div>
+                        <div class="rc-label">Probability:</div>
+                        <div class="rc-value">{{ row.AttritionProbability }}</div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="rc-title">&nbsp;</div>
+                        <div class="rc-label">Risk Score:</div>
+                        <div class="rc-value">{{ row.RiskScore }}</div>
+                    </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="rc-title">&nbsp;</div>
-                    <div class="rc-label">Risk Score:</div>
-                    <div class="rc-value">{{ row.RiskScore }}</div>
+                <div class="hr-line"></div>
+
+                <!-- KEY FACTORS -->
+                <div class="row rc-row">
+                    <div class="col-md-4">
+                        <div class="rc-title">Key Factors</div>
+                        <div><span class="rc-label">Job Satisfaction:</span> {{ row.JobSatisfaction }}</div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div><span class="rc-label">Work Life Balance:</span> {{ row.WorkLifeBalance }}</span></div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div><span class="rc-label">Years Since Last Promotion:</span> {{ row.YearsSinceLastPromotion }}
+                        </div>
+                    </div>
                 </div>
+
+                <div class="hr-line"></div>
+
+                <!-- RECOMMENDATIONS -->
+                <div class="rc-row">
+                    <div class="rc-title">HR Recommendations</div>
+                    <div class="rc-value">{{ row.Recommendations }}</div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a class="btn btn-secondary" href="/bulk">← Back to Bulk Results</a>
+
+                    <div class="download-btns">
+                        <a class="btn btn-outline-primary btn-sm"
+                            href="/employee_report/{{ row.EmployeeNumber }}/download/csv">Download (CSV)</a>
+                        <a class="btn btn-outline-success btn-sm"
+                            href="/employee_report/{{ row.EmployeeNumber }}/download/excel">Download (Excel)</a>
+                        <a class="btn btn-outline-danger btn-sm"
+                            href="/employee_report/{{ row.EmployeeNumber }}/download/pdf">Download (PDF)</a>
+                    </div>
+                </div>
+
             </div>
-
-            <div class="hr-line"></div>
-
-            <!-- KEY FACTORS -->
-            <div class="row rc-row">
-                <div class="col-md-4">
-                    <div class="rc-title">Key Factors</div>
-                    <div><span class="rc-label">Job Satisfaction:</span> {{ row.JobSatisfaction }}</div>
-                </div>
-
-                <div class="col-md-4">
-                    <div><span class="rc-label">Work Life Balance:</span> {{ row.WorkLifeBalance }}</span></div>
-                </div>
-
-                <div class="col-md-4">
-                    <div><span class="rc-label">Years Since Last Promotion:</span> {{ row.YearsSinceLastPromotion }}</div>
-                </div>
-            </div>
-
-            <div class="hr-line"></div>
-
-            <!-- RECOMMENDATIONS -->
-            <div class="rc-row">
-                <div class="rc-title">HR Recommendations</div>
-                <div class="rc-value">{{ row.Recommendations }}</div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <a class="btn btn-secondary" href="/bulk">← Back to Bulk Results</a>
-
-                <div class="download-btns">
-                    <a class="btn btn-outline-primary btn-sm" href="/employee_report/{{ row.EmployeeNumber }}/download/csv">Download (CSV)</a>
-                    <a class="btn btn-outline-success btn-sm" href="/employee_report/{{ row.EmployeeNumber }}/download/excel">Download (Excel)</a>
-                    <a class="btn btn-outline-danger btn-sm" href="/employee_report/{{ row.EmployeeNumber }}/download/pdf">Download (PDF)</a>
-                </div>
-            </div>
-
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

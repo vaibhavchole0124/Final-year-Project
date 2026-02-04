@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Login | HR Attrition System</title>
-
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
-
         :root {
+            --cord-length: 100px;
             --gold-1: #d7a432;
             --gold-2: #b8861b;
             --bg-top: #0f2a45;
@@ -18,24 +17,153 @@
 
         body {
             margin: 0;
-            height: 100vh;
-            background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden;
+            background: #111;
             font-family: 'Inter', sans-serif;
         }
 
+        /* Background Image - Admin Gradient */
+        .bg-image {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+            z-index: -2;
+            transition: filter 0.8s ease;
+        }
+
+        /* Dark Overlay for the "Off" state */
+        .dark-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+            transition: opacity 0.8s ease;
+        }
+
+        .lamp-container.on .bg-image {
+            filter: brightness(1.0);
+            /* Full brightness when on */
+        }
+
+        .lamp-container.on .dark-overlay {
+            opacity: 0;
+        }
+
+        /* Lamp Structure */
+        .lamp-wrapper {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            /* Clickable */
+        }
+
+        .lamp-shade {
+            width: 140px;
+            height: 70px;
+            background: #222;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            z-index: 15;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+        }
+
+        /* Text on the lamp */
+        .lamp-text {
+            position: relative;
+            z-index: 100;
+            margin-top: 5px;
+            color: #facc15;
+            /* Bright Gold */
+            text-shadow: 0 0 5px rgba(250, 204, 21, 0.8);
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+
+        /* Holder & Bulb */
+        .lamp-holder {
+            width: 30px;
+            height: 15px;
+            background: #444;
+            margin-top: -5px;
+            z-index: 14;
+        }
+
+        .lamp-bulb {
+            width: 20px;
+            height: 20px;
+            background: #555;
+            border-radius: 50%;
+            margin-top: -5px;
+            z-index: 13;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Bulb Glow when ON */
+        .lamp-container.on .lamp-bulb {
+            background: #ffeb3b;
+            box-shadow: 0 0 20px #ffeb3b;
+        }
+
+        /* The Light Beam */
+        .light-beam {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) perspective(600px) rotateX(20deg) scale(0);
+            transform-origin: top center;
+            width: 600px;
+            height: 120vh;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 80%);
+            clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 4;
+        }
+
+        .lamp-container.on .light-beam {
+            opacity: 1;
+            transform: translateX(-50%) perspective(600px) rotateX(20deg) scale(1);
+        }
+
+        /* Login Box Wrapper */
+        .login-box-wrapper {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.2s;
+        }
+
+        .lamp-container.on .login-box-wrapper {
+            opacity: 1;
+        }
+
+        /* --- ADMIN STYLE CARD --- */
         .login-card {
             width: 430px;
             background: #fff;
             padding: 40px 38px;
             border-radius: 22px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
             text-align: center;
         }
 
-        /* ⭐ LOGO – SAME AS USER LOGIN */
+        /* LOGO */
         .logo-wrap {
             width: 170px;
             height: 170px;
@@ -59,18 +187,23 @@
             font-weight: 600;
             color: #374151;
             text-align: left;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
         }
 
         .form-control {
             border-radius: 12px;
             padding: 12px;
-            background: rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.08);
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: #333 !important;
         }
 
         .form-control:focus {
             border-color: var(--gold-1);
-            box-shadow: 0 0 0 3px rgba(215,164,50,0.22);
+            box-shadow: 0 0 0 3px rgba(215, 164, 50, 0.22);
+            background: #fff;
         }
 
         .btn-gold {
@@ -82,16 +215,15 @@
             font-size: 16px;
             font-weight: 700;
             color: #fff;
-            box-shadow: 0 12px 26px rgba(215,164,50,0.35);
+            box-shadow: 0 12px 26px rgba(215, 164, 50, 0.35);
             margin-top: 6px;
         }
 
         .btn-gold:active {
             transform: translateY(1px);
-            box-shadow: 0 6px 14px rgba(215,164,50,0.18);
+            box-shadow: 0 6px 14px rgba(215, 164, 50, 0.18);
         }
 
-        /* 🔙 BACK TO USER LOGIN */
         .admin-login-link {
             margin-top: 12px;
         }
@@ -112,48 +244,76 @@
             color: #9aa3af;
             margin-top: 14px;
         }
-
     </style>
 </head>
+
 <body>
 
-<div class="login-card">
+    <div class="lamp-container">
+        <!-- Lamp Wrapper (Clickable) -->
+        <div class="lamp-wrapper" onclick="toggleLight()">
+            <div class="lamp-shade">
+                <span class="lamp-text">ADMIN</span>
+            </div>
+            <!-- Holder and Bulb -->
+            <div class="lamp-holder"></div>
+            <div class="lamp-bulb"></div>
 
-    <!-- LOGO -->
-    <div class="logo-wrap">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
-    </div>
-
-    {% if error %}
-        <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
-
-    <!-- ADMIN LOGIN FORM -->
-    <form method="POST" action="{{ url_for('admin_login') }}">
-        <div class="mb-3 text-start">
-            <label class="form-label">Admin Username</label>
-            <input type="text" name="username" class="form-control" placeholder="Enter admin username" required autofocus>
+            <div class="light-beam" id="lightBeam"></div>
         </div>
 
-        <div class="mb-3 text-start">
-            <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+        <!-- Login Form (Initially Hidden in Dark) -->
+        <div class="login-box-wrapper" id="loginBox">
+            <div class="login-card">
+
+                <!-- LOGO -->
+                <div class="logo-wrap">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+                </div>
+
+                <!-- ADMIN LOGIN FORM -->
+                <form method="POST" action="{{ url_for('admin_login') }}">
+                    <div class="mb-3 text-start">
+                        <label class="form-label">Admin Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Enter admin username"
+                            required autofocus>
+                    </div>
+
+                    <div class="mb-3 text-start">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Enter password"
+                            required>
+                    </div>
+
+                    <button class="btn-gold" type="submit">Login as Admin</button>
+                </form>
+
+                <!-- 🔙 BACK TO USER LOGIN -->
+                <div class="admin-login-link">
+                    <a href="{{ url_for('login') }}">← Back to User Login</a>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="footer-text">
+                    Powered by Vaibhav | Secure Login Portal
+                </div>
+            </div>
         </div>
 
-        <button class="btn-gold" type="submit">Login as Admin</button>
-    </form>
+        <!-- Dark Overlay (Fades out when light is on) -->
+        <div class="dark-overlay" id="darkOverlay"></div>
 
-    <!-- 🔙 BACK TO USER LOGIN -->
-    <div class="admin-login-link">
-        <a href="{{ url_for('login') }}">← Back to User Login</a>
+        <!-- Background -->
+        <div class="bg-image"></div>
     </div>
 
-    <!-- FOOTER -->
-    <div class="footer-text">
-        Powered by Vaibhav | Secure Login Portal
-    </div>
-
-</div>
+    <script>
+        function toggleLight() {
+            const container = document.querySelector('.lamp-container');
+            container.classList.toggle('on');
+        }
+    </script>
 
 </body>
+
 </html>

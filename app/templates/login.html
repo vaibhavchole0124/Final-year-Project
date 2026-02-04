@@ -9,6 +9,10 @@
     <style>
         :root {
             --cord-length: 100px;
+            --gold-1: #d7a432;
+            --gold-2: #b8861b;
+            --bg-top: #0f2a45;
+            --bg-bottom: #0b3550;
         }
 
         body {
@@ -18,14 +22,12 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Background Image */
+        /* Background Image - Admin Gradient */
         .bg-image {
             position: fixed;
             inset: 0;
-            background: url('/static/login_background_lamp.png') no-repeat center center/cover;
+            background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
             z-index: -2;
-            filter: brightness(0.3);
-            /* Default darker */
             transition: filter 0.8s ease;
         }
 
@@ -33,85 +35,117 @@
         .dark-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            /* Very dark */
+            background: rgba(0, 0, 0, 0.4);
             z-index: -1;
             transition: opacity 0.8s ease;
         }
 
         .lamp-container.on .bg-image {
-            filter: brightness(0.8);
-            /* Illuminate background */
+            filter: brightness(1.0);
+            /* Full brightness when on */
         }
 
         .lamp-container.on .dark-overlay {
             opacity: 0;
-            /* Clear darkness */
         }
 
         /* Lamp Structure */
         .lamp-wrapper {
             position: absolute;
-            top: -20px;
+            top: 0;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        .lamp-cord {
-            position: relative;
             cursor: pointer;
-            z-index: 20;
-            animation: swing 3s infinite ease-in-out;
-            transform-origin: top center;
+            /* Clickable */
         }
 
-        .cord-line {
-            width: 2px;
-            height: var(--cord-length);
-            background: #ccc;
-            margin: 0 auto;
-        }
-
-        .cord-handle {
-            width: 10px;
-            height: 10px;
-            background: #fff;
-            border-radius: 50%;
-            margin: -2px auto 0;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-        }
+        /* Remove Cord Styles */
 
         .lamp-shade {
-            width: 120px;
-            height: 60px;
+            width: 140px;
+            height: 70px;
             background: #222;
-            border-radius: 60px 60px 0 0;
-            /* Dome shape */
-            position: absolute;
-            top: -40px;
-            /* Hide slightly above */
+            border-radius: 0 0 20px 20px;
+            /* Trapezoid/inverted cup style for better text visibility */
+            position: relative;
+            /* Changed to relative for stacking */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            z-index: 15;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+            /* Trapezoid shape */
+        }
+
+        /* Text on the lamp */
+        .lamp-text {
+            position: relative;
+            z-index: 100;
+            margin-top: 5px;
+            color: #facc15;
+            /* Bright Gold */
+            text-shadow: 0 0 5px rgba(250, 204, 21, 0.8);
+            /* Glow effect */
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            pointer-events: none;
+            /* Let clicks pass through to cord */
+        }
+
+        /* Holder & Bulb */
+        .lamp-holder {
+            width: 30px;
+            height: 15px;
+            background: #444;
+            margin-top: -5px;
+            /* Tuck under shade slightly */
+            z-index: 14;
+        }
+
+        .lamp-bulb {
+            width: 20px;
+            height: 20px;
+            background: #555;
+            border-radius: 50%;
+            margin-top: -5px;
+            z-index: 13;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Bulb Glow when ON */
+        .lamp-container.on .lamp-bulb {
+            background: #ffeb3b;
+            box-shadow: 0 0 20px #ffeb3b;
         }
 
         /* The Light Beam */
         .light-beam {
             position: absolute;
-            top: var(--cord-length);
-            /* Start below the lamp fixture */
+            top: 70px;
+            /* Start below the shade/bulb assembly */
             left: 50%;
             transform: translateX(-50%) perspective(600px) rotateX(20deg) scale(0);
             transform-origin: top center;
             width: 600px;
             height: 120vh;
-            background: linear-gradient(to bottom, rgba(255, 235, 150, 0.5) 0%, rgba(255, 235, 150, 0) 80%);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 80%);
             clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
             opacity: 0;
             pointer-events: none;
             transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 5;
+            z-index: 4;
+            /* Below form */
         }
 
         .lamp-container.on .light-beam {
@@ -119,7 +153,7 @@
             transform: translateX(-50%) perspective(600px) rotateX(20deg) scale(1);
         }
 
-        /* Login Box */
+        /* Login Box Wrapper */
         .login-box-wrapper {
             position: absolute;
             top: 55%;
@@ -128,130 +162,158 @@
             z-index: 6;
             opacity: 0;
             transition: opacity 0.8s ease 0.2s;
-            /* Delay slightly */
         }
 
         .lamp-container.on .login-box-wrapper {
             opacity: 1;
         }
 
-        .minimalist-card {
-            width: 350px;
-            padding: 30px;
+        /* --- STYLES COPIED FROM ADMIN LOGIN --- */
+
+        .login-card {
+            width: 430px;
+            background: rgba(255, 255, 255, 0.08);
+            /* Semi-transparent */
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 40px 38px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .glass-input {
-            background: rgba(255, 255, 255, 0.2) !important;
+        /* LOGO */
+        .logo-wrap {
+            width: 170px;
+            height: 170px;
+            margin: 0 auto 14px auto;
+            background: transparent;
+            box-shadow: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-wrap img {
+            width: 250px;
+            height: 250px;
+            object-fit: contain;
+            background: transparent;
             border: none;
+        }
+
+        label.form-label {
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: left;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #fff !important;
         }
 
-        .glass-input:focus {
-            background: rgba(255, 255, 255, 0.3) !important;
-            box-shadow: none;
+        .form-control:focus {
+            border-color: var(--gold-1);
+            box-shadow: 0 0 0 3px rgba(215, 164, 50, 0.22);
+            background: #fff;
         }
 
-        /* Typography overrides for glass */
-        h2.text-white {
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        label.text-white {
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        @keyframes swing {
-            0% {
-                transform: rotate(1deg);
-            }
-
-            50% {
-                transform: rotate(-1deg);
-            }
-
-            100% {
-                transform: rotate(1deg);
-            }
-        }
-
-        .cord-line:hover {
-            background: #f4b41a;
-        }
-
-        .btn-warning {
-            background-color: #f4b41a;
+        .btn-gold {
+            width: 100%;
+            background: linear-gradient(180deg, var(--gold-1), var(--gold-2));
             border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 12px 26px rgba(215, 164, 50, 0.35);
+            margin-top: 6px;
         }
 
-        .btn-warning:hover {
-            background-color: #ffcd3c;
+        .btn-gold:active {
+            transform: translateY(1px);
+            box-shadow: 0 6px 14px rgba(215, 164, 50, 0.18);
         }
 
-        /* Auto-inject pull animation */
-        @keyframes pull {
-            0% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(15px);
-            }
-
-            100% {
-                transform: translateY(0);
-            }
+        .admin-login-link {
+            margin-top: 12px;
         }
+
+        .admin-login-link a {
+            font-size: 0.9rem;
+            color: #b8861b;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .admin-login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Remove Animations for cord */
     </style>
 </head>
 
 <body>
 
     <div class="lamp-container">
-        <!-- Lamp & Cord -->
-        <div class="lamp-wrapper">
-            <div class="lamp-cord" onclick="toggleLight()">
-                <div class="cord-line"></div>
-                <div class="cord-handle"></div>
+        <!-- Lamp Wrapper (Clickable) -->
+        <div class="lamp-wrapper" onclick="toggleLight()">
+            <div class="lamp-shade">
+                <span class="lamp-text">LOGIN</span>
             </div>
-            <div class="lamp-shade"></div>
+            <!-- Holder and Bulb -->
+            <div class="lamp-holder"></div>
+            <div class="lamp-bulb"></div>
+
             <div class="light-beam" id="lightBeam"></div>
         </div>
 
         <!-- Login Form (Initially Hidden in Dark) -->
         <div class="login-box-wrapper" id="loginBox">
-            <div class="login-card minimalist-card">
-                <h2 class="mb-4 text-white">Welcome Back</h2>
+            <div class="login-card">
 
-                {% if error %}
-                <div class="alert alert-danger p-2">{{ error }}</div>
-                {% endif %}
+                <!-- LOGO -->
+                <div class="logo-wrap">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+                </div>
 
-                <form method="POST" action="{{ url_for('login') }}">
+                <!-- Removed explicit Welcome Header to match minimalist admin style or keep it small -->
+                <!-- <h2 class="mb-4 text-dark">Welcome Back</h2> -->
+
+                <form method="POST" action="/login">
                     <div class="mb-3 text-start">
-                        <label class="text-white small">Username</label>
-                        <input type="text" name="username" class="form-control glass-input" required autofocus>
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Enter username" required
+                            autofocus>
                     </div>
                     <div class="mb-3 text-start">
-                        <label class="text-white small">Password</label>
-                        <input type="password" name="password" class="form-control glass-input" required>
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Enter password"
+                            required>
                     </div>
-                    <button class="btn btn-warning w-100 fw-bold mt-2" type="submit">SIGN IN</button>
+                    <button class="btn-gold" type="submit"
+                        style="background: linear-gradient(135deg, #f1c40f, #f39c12); border: none; color: #000; font-weight: 700; border-radius: 50px; padding: 12px; width: 100%; box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);">SIGN
+                        IN</button>
                 </form>
 
                 <div class="mt-3">
-                    <a href="{{ url_for('register') }}" class="text-white-50 small text-decoration-none">Create
-                        Account</a>
+                    <a href="/register" class="text-white-50 small text-decoration-none">Create Account</a>
                 </div>
 
-                <div class="admin-login-link mt-3">
-                    <a href="/admin/login" class="text-white-50 small text-decoration-none">
-                        Login as Admin
-                    </a>
+                <div class="admin-login-link mt-2">
+                    <a href="/admin/login" style="color: #f1c40f;">Login as Admin</a>
                 </div>
             </div>
         </div>
@@ -266,18 +328,8 @@
     <script>
         function toggleLight() {
             const container = document.querySelector('.lamp-container');
-            const cord = document.querySelector('.lamp-cord');
-
             container.classList.toggle('on');
-
-            // Pull animation
-            cord.style.animation = 'none';
-            cord.offsetHeight; /* trigger reflow */
-            cord.style.animation = "pull 0.4s ease";
-
-            setTimeout(() => {
-                cord.style.animation = "swing 3s infinite ease-in-out";
-            }, 400);
+            // Removed cord animation logic
         }
     </script>
 
