@@ -264,6 +264,30 @@
                         <canvas id="shapChart"></canvas>
                     </div>
 
+                    <div class="mt-3 text-center">
+                        <button class="btn btn-outline-info btn-sm w-100" onclick="getDeepExplanation()">
+                            <i class="bi bi-diagram-3"></i> View Deep Explanation (Waterfall)
+                        </button>
+                    </div>
+
+                    <!-- Waterfall Modal -->
+                    <div class="modal fade" id="waterfallModal" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content glass-card p-0"
+                                style="background: #0f172a; border: 1px solid #334155;">
+                                <div class="modal-header border-bottom border-secondary">
+                                    <h5 class="modal-title text-info">Deep Feature Explanation</h5>
+                                    <button type="button" class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center p-4">
+                                    <div id="waterfallSpinner" class="spinner-border text-info d-none"></div>
+                                    <img id="waterfallImg" class="img-fluid rounded" style="display:none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <hr>
 
                     <h5>HR Recommendations</h5>
@@ -301,6 +325,54 @@
             },
             options: { cutout: "70%", plugins: { legend: { display: false } } }
         });
+
+
+        function getDeepExplanation() {
+            const modal = new bootstrap.Modal(document.getElementById('waterfallModal'));
+            modal.show();
+
+            const spinner = document.getElementById('waterfallSpinner');
+            const img = document.getElementById('waterfallImg');
+
+            spinner.classList.remove('d-none');
+            img.style.display = 'none';
+
+            // Gather form data
+            const form = document.querySelector('form');
+            if (!form) return;
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Number conversion
+            for (const key in data) {
+                if (!isNaN(data[key]) && data[key] !== "") {
+                    data[key] = Number(data[key]);
+                }
+            }
+
+            fetch('/api/explain_prediction', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(result => {
+                    spinner.classList.add('d-none');
+                    if (result.image) {
+                        img.src = "data:image/png;base64," + result.image;
+                        img.style.display = 'block';
+                    } else {
+                        alert('Could not generate explanation: ' + (result.error || 'Unknown error'));
+                        modal.hide();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    spinner.classList.add('d-none');
+                    modal.hide();
+                });
+        }
 
         // 2. SHAP Feature Importance Chart
         {% if prediction.shap_data %}

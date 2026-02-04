@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Dashboard | Employee Attrition Rate</title>
@@ -7,126 +8,165 @@
   <!-- Bootstrap + Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
   <style>
-    body{
-      background: linear-gradient(180deg,#0f2a45,#0b3550);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-family: system-ui;
+    body {
+      background: radial-gradient(circle at top, #0f2a44, #050b16);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', system-ui;
+      color: #fff;
     }
 
-    .dash-box{
-      width: 820px;
-      background:#fff;
-      border-radius:22px;
-      padding:36px;
-      box-shadow:0 25px 70px rgba(0,0,0,0.45);
+    .dash-box {
+      width: 850px;
+      /* Glassmorphism */
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
     }
 
-    .logo{
-      text-align:center;
-      margin-bottom:24px;
-    }
-    .logo img{
-      width:150px;
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
     }
 
-    h2{
-      text-align:center;
-      font-weight:800;
-      margin-bottom:30px;
+    .logo img {
+      width: 160px;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
     }
 
-    .card-btn{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      height:160px;
-      border-radius:18px;
-      background:#f8fafc;
-      text-decoration:none;
-      color:#111;
-      font-weight:700;
-      box-shadow:0 12px 30px rgba(0,0,0,0.08);
-      transition:0.25s;
+    h2 {
+      text-align: center;
+      font-weight: 800;
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
     }
 
-    .card-btn i{
-      font-size:38px;
-      margin-bottom:10px;
-      color:#b27a12;
+    .card-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 170px;
+      border-radius: 20px;
+
+      /* Dark Glass Button */
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+
+      text-decoration: none;
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .card-btn i {
+      font-size: 42px;
+      margin-bottom: 12px;
+      color: #64748b;
+      transition: 0.3s ease;
     }
 
     /* Hover animation */
-    .card-btn:hover{
-      transform: translateY(-6px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    .card-btn:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      color: #fff;
     }
 
-    /* White hover ONLY for non-logout buttons */
-    .card-btn:not(.logout):hover{
-      background:#fff;
+    .card-btn:hover i {
+      color: #f1c40f;
+      /* Gold glow */
+      transform: scale(1.1);
+      text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
     }
 
-    /* Logout button */
-    .logout{
-      background:linear-gradient(180deg,#b27a12,#8d5f0c);
-      color:#fff;
+    /* Logout button specific */
+    .logout {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.2);
     }
-    .logout i{ color:#fff; }
 
-    @media(max-width:768px){
-      .dash-box{ width:95%; }
+    .logout i {
+      color: #ef4444;
+    }
+
+    .logout:hover {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: rgba(239, 68, 68, 0.4) !important;
+      box-shadow: 0 15px 30px rgba(239, 68, 68, 0.15) !important;
+    }
+
+    .logout:hover i {
+      color: #ff8888;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+
+    @media(max-width:768px) {
+      .dash-box {
+        width: 95%;
+        padding: 20px;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<div class="dash-box">
+  <div class="dash-box">
 
-  <div class="logo">
-    <img src="{{ url_for('static', filename='logo.png') }}">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='logo.png') }}" class="mb-2">
+      <h3 class="fw-bold mb-0 text-white-50" style="letter-spacing: 2px; font-size: 1rem;">DASHBOARD</h3>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-md-3 col-6">
+        <a href="{{ url_for('index') }}" class="card-btn">
+          <i class="bi bi-person-check-fill"></i>
+          Single Prediction
+        </a>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <a href="{{ url_for('bulk_upload') }}" class="card-btn">
+          <i class="bi bi-cloud-upload-fill"></i>
+          Bulk Prediction
+        </a>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <a href="{{ url_for('dashboard') }}" class="card-btn">
+          <i class="bi bi-bar-chart-fill"></i>
+          Reports
+        </a>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <a href="{{ url_for('logout') }}" class="card-btn logout">
+          <i class="bi bi-power"></i>
+          Logout
+        </a>
+      </div>
+
+    </div>
+
   </div>
-
-  
-
-  <div class="row g-4">
-
-    <div class="col-md-3 col-6">
-      <a href="{{ url_for('index') }}" class="card-btn">
-        <i class="bi bi-person-check"></i>
-        Single Prediction
-      </a>
-    </div>
-
-    <div class="col-md-3 col-6">
-      <a href="{{ url_for('bulk') }}" class="card-btn">
-        <i class="bi bi-upload"></i>
-        Bulk Prediction
-      </a>
-    </div>
-
-    <div class="col-md-3 col-6">
-      <a href="{{ url_for('dashboard') }}" class="card-btn">
-        <i class="bi bi-graph-up"></i>
-        Reports
-      </a>
-    </div>
-
-    <div class="col-md-3 col-6">
-      <a href="{{ url_for('logout') }}" class="card-btn logout">
-        <i class="bi bi-box-arrow-right"></i>
-        Logout
-      </a>
-    </div>
-
-  </div>
-
-</div>
 
 </body>
+
 </html>

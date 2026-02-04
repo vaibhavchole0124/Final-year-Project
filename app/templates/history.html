@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body class="bg-light">
+<body class="text-white" style="background: radial-gradient(circle at top, #0f2a44, #050b16); min-height: 100vh;">
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-premium px-4 py-3">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/">
                 <img src="{{ url_for('static', filename='logo.png') }}" height="32">
-                <span class="text-white">EMPLOYEE ATTRITION SYSTEM</span>
+                <span class="text-white fw-bold" style="letter-spacing:1px;">ATTRITION SYSTEM</span>
             </a>
             <div class="ms-auto d-flex gap-2">
                 <a href="/" class="btn btn-outline-light btn-sm">Single</a>
@@ -27,49 +27,60 @@
     </nav>
 
     <div class="container mt-5">
-        <h2 class="fw-bold mb-4">📜 Prediction History</h2>
+        <h2 class="fw-bold mb-4 text-neon"><i class="bi bi-clock-history me-2"></i>Prediction History</h2>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                {% if history %}
-                <div class="table-responsive">
-                    <table class="table table-striped align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Type</th>
-                                <th>Result</th>
-                                <th>Risk Score</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in history %}
-                            <tr>
-                                <td>
-                                    <span class="badge bg-secondary">{{ row['prediction_type'] }}</span>
-                                </td>
-                                <td>
-                                    {% if 'LEAVE' in row['result'] or 'High' in row['result'] %}
-                                    <span class="text-danger fw-bold">{{ row['result'] }}</span>
-                                    {% else %}
-                                    <span class="text-success fw-bold">{{ row['result'] }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ row['probability'] }}%
-                                </td>
-                                <td>
-                                    {{ row['timestamp'] }}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <p class="text-muted text-center py-4">No history validation found yet. Run some predictions!</p>
-                {% endif %}
+        <div class="glass-card p-4">
+
+            {% if history %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle" style="background: transparent;">
+                    <thead>
+                        <tr class="text-secondary small text-uppercase">
+                            <th>Type</th>
+                            <th>Result</th>
+                            <th>Risk Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in history %}
+                        <tr>
+                            <td>
+                                <span class="badge bg-primary bg-opacity-25 text-primary border border-primary">{{
+                                    row['prediction_type'] }}</span>
+                            </td>
+                            <td>
+                                {% if 'LEAVE' in row['result'] or 'High' in row['result'] %}
+                                <span class="text-danger fw-bold"><i class="bi bi-exclamation-circle me-1"></i>{{
+                                    row['result'] }}</span>
+                                {% else %}
+                                <span class="text-success fw-bold"><i class="bi bi-check-circle me-1"></i>{{
+                                    row['result'] }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 6px; width: 100px;">
+                                    <div class="progress-bar {{ 'bg-danger' if row['probability']|float > 50 else 'bg-success' }}"
+                                        role="progressbar" style="width: {{ row['probability'] }}%"></div>
+                                </div>
+                                <small class="text-white-50">{{ row['probability'] }}%</small>
+                            </td>
+                            <td class="text-white-50 small">
+                                {{ row['timestamp'] }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% else %}
+            <div class="text-center py-5 text-white-50">
+                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                <p>No prediction history found.</p>
+                <a href="/" class="btn btn-primary btn-sm mt-2">Make a Prediction</a>
+            </div>
+            {% endif %}
+
         </div>
     </div>
 

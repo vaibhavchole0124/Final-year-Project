@@ -659,6 +659,54 @@ body {
     border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.4);
+
+/* CYBERPUNK / FUTURE TECH EXTRAS */
+.text-neon {
+    color: #fff;
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+}
+
+.text-gold-glow {
+    color: #f1c40f;
+    text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+}
+
+.input-cyber {
+    background: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid #1e293b !important;
+    color: #38bdf8 !important;
+    /* light blue */
+    font-family: "Courier New", monospace;
+    transition: 0.3s;
+}
+
+.input-cyber:focus {
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.3) !important;
+    border-color: #38bdf8 !important;
+}
+
+.card-hover-glow {
+    transition: 0.3s ease;
+}
+
+.card-hover-glow:hover {
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-5px);
+}
+
+/* Spinner for future tech */
+.spinner-tech {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid rgba(56, 189, 248, 0.2);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

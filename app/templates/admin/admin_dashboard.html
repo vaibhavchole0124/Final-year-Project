@@ -3,40 +3,6 @@
 
 <style>
   /* Specific overrides for Admin Dash */
-  .card-box {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 25px;
-    height: 100%;
-    transition: transform 0.3s ease;
-  }
-
-  .card-box:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
-  }
-
-  .stat-icon {
-    font-size: 2.2rem;
-    color: #f1c40f;
-    margin-bottom: 12px;
-  }
-
-  .donut-wrapper {
-    position: relative;
-    height: 180px;
-  }
-
-  .center-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
   .retrain-btn {
     background: linear-gradient(135deg, #f1c40f, #f39c12);
     border: none;
@@ -47,439 +13,546 @@
     width: 100%;
     box-shadow: 0 8px 15px rgba(243, 156, 18, 0.3);
   }
+
+  body {
+    background: radial-gradient(circle at top, #0f2a44, #050b16);
+    color: #fff;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    background: #050b16;
+    padding: 20px;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 6px;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: .3s;
+  }
+
+  .sidebar a.active,
+  .sidebar a:hover {
+    background: #1d4ed8;
+    color: #fff;
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 260px;
+    padding: 30px;
+  }
+
+  /* HOVER */
+  .hover {
+    transition: .35s ease;
+  }
+
+  .hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, .45);
+  }
+
+  /* CARDS */
+  .card-box {
+    background: linear-gradient(145deg, #162f4f, #0c1c32);
+    border-radius: 20px;
+    padding: 25px;
+    height: 100%;
+  }
+
+  .stat-icon {
+    font-size: 30px;
+    color: #60a5fa;
+  }
+
+  /* DONUT */
+  .donut-wrapper {
+    position: relative;
+    height: 220px;
+  }
+
+  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    text-align: center;
+    width: 100%;
+  }
+
+  .center-text h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  /* RIGHT PANEL */
+  /* ICON BLOCK ABOVE RANDOM FOREST */
+  .icon-block {
+    background: linear-gradient(145deg, #162f4f, #0c1c32);
+    border-radius: 16px;
+    padding: 12px 16px;
+    min-height: 44px;
+    /* 🔴 VERY IMPORTANT */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+
+  /* ICON STYLE */
+  .icon-btn {
+    font-size: 18px;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+
+  .icon-btn:hover {
+    color: #facc15;
+    transform: scale(1.15);
+  }
+
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 20px;
+  }
+
+  .right-card {
+    background: linear-gradient(145deg, #162f4f, #0c1c32);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, .4);
+    position: relative;
+    /* 🔴 IMPORTANT */
+  }
+
+  .admin-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+  }
+
+  /* TOP ICONS IN RIGHT CARD */
+  .top-icons {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* RANDOM FOREST TEXT FIX */
+  .rf-card {
+    text-align: center;
+  }
+
+  /* MAIN MODEL ICON */
+  .rf-main-icon {
+    font-size: 44px;
+    color: #facc15;
+    margin-top: 26px;
+    /* 👈 space below icons */
+  }
+
+  /* TEXT LINES */
+  .rf-text {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #94a3b8;
+  }
+
+  /* VALUE HIGHLIGHT */
+  .rf-value {
+    color: #facc15;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+
+  /* MUTED VALUE */
+  .rf-muted {
+    color: #e5e7eb;
+    margin-left: 4px;
+  }
+
+  .top-icons i {
+    font-size: 17px;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  /* SPACE BETWEEN ICONS */
+  .top-icons i:first-child {
+    margin-right: 14px;
+  }
+
+  .top-icons i:hover {
+    color: #facc15;
+    transform: scale(1.15);
+  }
+
+  .top-icons {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* EACH ICON BOX */
+  .icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 12px;
+    /* ✅ GUARANTEED SPACE */
+    cursor: pointer;
+  }
+
+  /* ICON STYLE */
+  .icon-wrap i {
+    color: #cbd5e1;
+    transition: 0.3s;
+  }
+
+  .icon-wrap:hover i {
+    color: #facc15;
+    transform: scale(1.15);
+  }
 </style>
-body{
-background: radial-gradient(circle at top, #0f2a44, #050b16);
-color:#fff;
-font-family:"Segoe UI",sans-serif;
-}
 
-/* SIDEBAR */
-.sidebar{
-width:240px;
-height:100vh;
-position:fixed;
-background:#050b16;
-padding:20px;
-}
-.sidebar a{
-display:block;
-padding:12px 15px;
-margin-bottom:6px;
-color:#cbd5e1;
-text-decoration:none;
-border-radius:10px;
-transition:.3s;
-}
-.sidebar a.active,
-.sidebar a:hover{
-background:#1d4ed8;
-color:#fff;
-}
+<div class="row g-4">
 
-/* MAIN */
-.main{ margin-left:260px; padding:30px; }
+  <!-- ================= MAIN DASHBOARD ================= -->
+  <div class="col-md-9">
 
-/* HOVER */
-.hover{ transition:.35s ease; }
-.hover:hover{
-transform:translateY(-8px);
-box-shadow:0 25px 50px rgba(0,0,0,.45);
-}
+    <h6 class="text-secondary">Admin Dashboard Overview</h6>
+    <h2 class="mb-4">Admin Dashboard</h2>
 
-/* CARDS */
-.card-box{
-background:linear-gradient(145deg,#162f4f,#0c1c32);
-border-radius:20px;
-padding:25px;
-height:100%;
-}
-.stat-icon{ font-size:30px; color:#60a5fa; }
-
-/* DONUT */
-.donut-wrapper{
-position:relative;
-height:220px;
-}
-.center-text{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-pointer-events:none;
-}
-.center-text h2{
-margin:0;
-font-size:28px;
-font-weight:700;
-}
-
-/* RIGHT PANEL */
-/* ICON BLOCK ABOVE RANDOM FOREST */
-/* ICON BLOCK ABOVE RANDOM FOREST */
-.icon-block{
-background: linear-gradient(145deg,#162f4f,#0c1c32);
-border-radius: 16px;
-padding: 12px 16px;
-min-height: 44px; /* 🔴 VERY IMPORTANT */
-display: flex;
-align-items: center;
-justify-content: flex-end;
-}
-
-
-/* ICON STYLE */
-.icon-btn{
-font-size: 18px;
-color: #cbd5e1;
-cursor: pointer;
-transition: 0.3s ease;
-}
-
-.icon-btn:hover{
-color: #facc15;
-transform: scale(1.15);
-}
-
-.right-panel{
-display:flex;
-flex-direction:column;
-gap:20px;
-position:sticky;
-top:20px;
-}
-.right-card{
-background:linear-gradient(145deg,#162f4f,#0c1c32);
-border-radius:20px;
-padding:25px;
-box-shadow:0 20px 40px rgba(0,0,0,.4);
-position: relative; /* 🔴 IMPORTANT */
-}
-
-.retrain-btn{
-background:#facc15;
-border:none;
-width:100%;
-padding:12px;
-font-weight:700;
-border-radius:12px;
-}
-.admin-img{
-width:90px;
-height:90px;
-border-radius:50%;
-}
-/* TOP ICONS IN RIGHT CARD */
-.top-icons{
-position: absolute;
-top: 14px;
-right: 16px;
-display: flex;
-align-items: center;
-}
-
-/* RANDOM FOREST TEXT FIX */
-.rf-card{
-text-align: center;
-}
-
-/* MAIN MODEL ICON */
-.rf-main-icon{
-font-size: 44px;
-color: #facc15;
-margin-top: 26px; /* 👈 space below icons */
-}
-
-/* TEXT LINES */
-.rf-text{
-margin: 6px 0;
-font-size: 14px;
-color: #94a3b8;
-}
-
-/* VALUE HIGHLIGHT */
-.rf-value{
-color: #facc15;
-font-weight: 600;
-margin-left: 4px;
-}
-
-/* MUTED VALUE */
-.rf-muted{
-color: #e5e7eb;
-margin-left: 4px;
-}
-.top-icons i{
-font-size: 17px;
-color: #cbd5e1;
-cursor: pointer;
-transition: 0.3s;
-}
-
-/* SPACE BETWEEN ICONS */
-.top-icons i:first-child{
-margin-right: 14px;
-}
-
-.top-icons i:hover{
-color: #facc15;
-transform: scale(1.15);
-}
-.top-icons{
-position: absolute;
-top: 14px;
-right: 16px;
-display: flex;
-align-items: center;
-}
-
-/* EACH ICON BOX */
-.icon-wrap{
-width: 32px;
-height: 32px;
-border-radius: 8px;
-display: flex;
-align-items: center;
-justify-content: center;
-margin-left: 12px; /* ✅ GUARANTEED SPACE */
-cursor: pointer;
-}
-
-/* ICON STYLE */
-.icon-wrap i{
-font-size: 17px;
-color: #cbd5e1;
-transition: 0.3s;
-}
-
-.icon-wrap:hover i{
-color: #facc15;
-transform: scale(1.15);
-}
-
-
-
-</style>
-</head>
-
-<body>
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h4>Employee Attrition</h4>
-    <a class="active">Dashboard</a>
-    <a>Manage Users</a>
-    <a>Prediction Reports</a>
-    <a>High Risk Employees</a>
-    <a>System Logs</a>
-    <a>User Dashboard</a>
-    <a class="text-danger">Logout</a>
-  </div>
-
-  <div class="main container-fluid">
+    <!-- STATS -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="glass-card card-hover-glow text-center"><i class="bi bi-people stat-icon text-gold-glow"></i>
+          <h3 class="text-neon">{{ total_users }}</h3>
+          <small class="text-white-50">Total Users</small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="glass-card card-hover-glow text-center"><i class="bi bi-graph-up stat-icon text-gold-glow"></i>
+          <h3 class="text-neon">{{ single_predictions }}</h3>
+          <small class="text-white-50">Single Predictions</small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="glass-card card-hover-glow text-center"><i class="bi bi-layers stat-icon text-gold-glow"></i>
+          <h3 class="text-neon">{{ bulk_predictions }}</h3>
+          <small class="text-white-50">Bulk Predictions</small>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="glass-card card-hover-glow text-center"><i
+            class="bi bi-exclamation-triangle stat-icon text-danger"></i>
+          <h3 class="text-neon text-danger">{{ high_risk }}</h3>
+          <small class="text-white-50">High Risk Employees</small>
+        </div>
+      </div>
+    </div>
+    <!-- ================= CHARTS (FIXED) ================= -->
+    <div class="row g-4 mb-4">
+      <!-- BAR -->
+      <div class="col-md-6">
+        <div class="card-box hover">
+          <h5>Attrition Past 12 Months</h5><canvas id="monthChart"></canvas>
+        </div>
+      </div>
+      <!-- AT RISK PIE -->
+      <div class="col-md-3">
+        <div class="card-box hover text-center">
+          <h5>At Risk</h5>
+          <div class="donut-wrapper"><canvas id="riskChart"></canvas>
+            <div class="center-text">
+              <h2>{{ at_risk_percent }}%</h2>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="badge bg-danger me-2">At Risk: {{ at_risk }}</span>
+            <span class="badge bg-success">Safe: {{ safe }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- PREDICTION TYPE PIE (FIXED POSITION) -->
+      <div class="col-md-3">
+        <div class="card-box hover text-center">
+          <h5>Prediction Type</h5>
+          <div class="donut-wrapper"><canvas id="typeChart"></canvas>
+            <div class="center-text">
+              <h2>{{ single_percent }}%</h2>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="badge bg-primary me-2">Single: {{ single }}</span>
+            <span class="badge bg-warning text-dark">Bulk: {{ bulk }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- TABLES -->
     <div class="row g-4">
-
-      <!-- ================= MAIN DASHBOARD ================= -->
-      <div class="col-md-9">
-
-        <h6 class="text-secondary">Admin Dashboard Overview</h6>
-        <h2 class="mb-4">Admin Dashboard</h2>
-
-        <!-- STATS -->
-        <div class="row g-4 mb-4">
-          <div class="col-md-3">
-            <div class="card-box hover text-center"><i class="bi bi-people stat-icon"></i>
-              <h3>{{ total_users }}</h3><small>Total Users</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card-box hover text-center"><i class="bi bi-graph-up stat-icon"></i>
-              <h3>{{ single_predictions }}</h3><small>Single Predictions</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card-box hover text-center"><i class="bi bi-layers stat-icon"></i>
-              <h3>{{ bulk_predictions }}</h3><small>Bulk Predictions</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card-box hover text-center"><i class="bi bi-exclamation-triangle stat-icon"></i>
-              <h3>{{ high_risk }}</h3><small>High Risk Employees</small>
-            </div>
-          </div>
+      <div class="col-md-6">
+        <div class="card-box hover">
+          <h5>High Risk Employees</h5>
+          <table class="table table-dark mt-3 align-middle">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Risk %</th>
+                <th>Department</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u, r, d in high_risk_employees %}
+              <tr>
+                <td>{{ u }}</td>
+                <td class="text-danger fw-bold">{{ r }}%</td>
+                <td>{{ d }}</td>
+                <td>
+                  <a href="{{ url_for('retention_strategy', name=u, risk=r, dept=d) }}"
+                    class="btn btn-sm btn-outline-warning">
+                    <i class="bi bi-robot"></i> AI Strategy
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-
-        <!-- ================= CHARTS (FIXED) ================= -->
-        <div class="row g-4 mb-4">
-
-          <!-- BAR -->
-          <div class="col-md-6">
-            <div class="card-box hover">
-              <h5>Attrition Past 12 Months</h5>
-              <canvas id="monthChart"></canvas>
-            </div>
-          </div>
-
-          <!-- AT RISK PIE -->
-          <div class="col-md-3">
-            <div class="card-box hover text-center">
-              <h5>At Risk</h5>
-              <div class="donut-wrapper">
-                <canvas id="riskChart"></canvas>
-                <div class="center-text">
-                  <h2>{{ at_risk_percent }}%</h2>
-                </div>
-              </div>
-              <div class="mt-3">
-                <span class="badge bg-danger me-2">At Risk: {{ at_risk }}</span>
-                <span class="badge bg-success">Safe: {{ safe }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- PREDICTION TYPE PIE (FIXED POSITION) -->
-          <div class="col-md-3">
-            <div class="card-box hover text-center">
-              <h5>Prediction Type</h5>
-              <div class="donut-wrapper">
-                <canvas id="typeChart"></canvas>
-                <div class="center-text">
-                  <h2>{{ single_percent }}%</h2>
-                </div>
-              </div>
-              <div class="mt-3">
-                <span class="badge bg-primary me-2">Single: {{ single }}</span>
-                <span class="badge bg-warning text-dark">Bulk: {{ bulk }}</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- TABLES -->
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="card-box hover">
-              <h5>High Risk Employees</h5>
-              <table class="table table-dark mt-3">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Risk %</th>
-                    <th>Department</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for u,r,d in high_risk_employees %}
-                  <tr>
-                    <td>{{ u }}</td>
-                    <td class="text-danger">{{ r }}%</td>
-                    <td>{{ d }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="card-box hover">
-              <h5>Prediction Logs</h5>
-              <table class="table table-dark mt-3">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Type</th>
-                    <th>Result</th>
-                    <th>%</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for u,t,r,p,d in prediction_logs %}
-                  <tr>
-                    <td>{{ u }}</td>
-                    <td>{{ t }}</td>
-                    <td class="{{ 'text-danger' if r=='At Risk' else 'text-success' }}">{{ r }}</td>
-                    <td>{{ p }}%</td>
-                    <td>{{ d }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
       </div>
-
-      <!-- ================= RIGHT PANEL ================= -->
-      <div class="col-md-3 right-panel">
-
-        <!-- ICON BLOCK (FIRST) -->
-        <div class="right-card icon-block">
-          <div class="icon-wrap">
-            <i class="bi bi-person-circle"></i>
-          </div>
-          <div class="icon-wrap">
-            <i class="bi bi-bell"></i>
-          </div>
+      <div class="col-md-6">
+        <div class="card-box hover">
+          <h5>Prediction Logs</h5>
+          <table class="table table-dark mt-3">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Type</th>
+                <th>Result</th>
+                <th>%</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u, t, r, p, d in prediction_logs %}
+              <tr>
+                <td>{{ u }}</td>
+                <td>{{ t }}</td>
+                <td class="{{ 'text-danger' if r=='At Risk' else 'text-success' }}">{{ r }}</td>
+                <td>{{ p }}%</td>
+                <td>{{ d }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-
-        <!-- RANDOM FOREST CARD (SECOND) -->
-        <div class="right-card text-center">
-          <!-- MODEL ICON -->
-          <i class="bi bi-layers rf-main-icon"></i>
-
-          <h4 class="mt-2">Random Forest</h4>
-
-          <p class="rf-text">
-            Accuracy:<span class="rf-value">92.7%</span>
-          </p>
-
-          <p class="rf-text">
-            Last Trained:<span class="rf-muted">2 hours ago</span>
-          </p>
-
-          <p class="rf-text">
-            Records:<span class="rf-muted">12,567</span>
-          </p>
-
-          <button class="retrain-btn mt-3">Retrain Model</button>
-        </div>
-
-        <!-- UPCOMING FEATURES -->
-        <div class="right-card">
-          <h5>Upcoming Admin Features</h5>
-          <ul>
-            <li>User Management</li>
-            <li>Prediction Logs</li>
-            <li>Model Retraining</li>
-            <li>Export Reports</li>
-          </ul>
-        </div>
-
-        <!-- ADMIN PROFILE -->
-        <div class="right-card text-center">
-          <img src="https://i.pravatar.cc/120" class="admin-img mb-2">
-          <h5>Admin</h5>
-          <p>admin@email.com</p>
-        </div>
-
       </div>
-
     </div>
   </div>
+  <!-- ================= RIGHT PANEL ================= -->
+  <div class="col-md-3 right-panel">
+    <!-- ICON BLOCK (FIRST) -->
+    <div class="right-card icon-block">
+      <div class="icon-wrap"><i class="bi bi-person-circle"></i></div>
+      <div class="icon-wrap"><i class="bi bi-bell"></i></div>
+    </div>
+    <!-- RANDOM FOREST CARD (SECOND) -->
+    <div class="right-card text-center">
+      <!-- MODEL ICON --><i class="bi bi-layers rf-main-icon"></i>
+      <h4 class="mt-2">Random Forest</h4>
+      <p class="rf-text">Accuracy:<span class="rf-value">92.7%</span></p>
+      <p class="rf-text">Last Trained:<span class="rf-muted">2 hours ago</span></p>
+      <p class="rf-text">Records:<span class="rf-muted">12,567</span></p>
+      <button class="retrain-btn mt-3" onclick="openTerminal()">Retrain Model</button>
+    </div>
+    <!-- UPCOMING FEATURES -->
+    <div class="right-card">
+      <h5>Upcoming Admin Features</h5>
+      <ul>
+        <li>User Management</li>
+        <li>Prediction Logs logs</li>
+        <li>Model Retraining</li>
+        <li>Export Reports</li>
+      </ul>
+    </div>
+    <!-- ADMIN PROFILE -->
+    <!-- ================= CHART JS ================= -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Bar Chart
+        const monthCtx = document.getElementById('monthChart');
+        if (monthCtx) {
+          new Chart(monthCtx, {
+            type: 'bar',
+            data: {
+              labels: {{ month_labels | tojson }},
+              datasets: [{
+          label: 'Not At Risk',
+          data: {{ safe_month | tojson }},
+        backgroundColor: '#3b82f6'
+              }, {
+          label: 'At Risk',
+          data: {{ at_risk_month | tojson }},
+        backgroundColor: '#facc15'
+              }]
+            },
+        options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#fff' }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(255,255,255,0.1)' },
+            ticks: { color: '#fff' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#fff' }
+          }
+        }
+      }
+          });
+        }
 
-  <!-- ================= CHART JS ================= -->
-  <script>
-    new Chart(monthChart, { type: 'bar', data: { labels: {{ month_labels| tojson}}, datasets: [
-      { label: 'Not At Risk', data: {{ safe_month| tojson}}, backgroundColor: '#3b82f6'},
-      { label: 'At Risk', data: {{ at_risk_month| tojson}}, backgroundColor: '#facc15'}
-    ]}});
+      // Risk Pie Chart
+      const riskCtx = document.getElementById('riskChart');
+      if (riskCtx) {
+        new Chart(riskCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['At Risk', 'Safe'],
+            datasets: [{
+              data: [{{ at_risk }}, {{ safe }}],
+          backgroundColor: ['#ef4444', '#22c55e'],
+          borderWidth: 0
+        }]
+            },
+      options: {
+        cutout: '75%',
+          plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        }
+      }
+          });
+        }
 
-    new Chart(riskChart, { type: 'doughnut', data: { labels: ['At Risk', 'Safe'], datasets: [{ data: [{{ at_risk }}, {{ safe }}], backgroundColor: ['#ef4444', '#22c55e'] }]}, options: { cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: true } } }});
-    new Chart(typeChart, { type: 'doughnut', data: { labels: ['Single', 'Bulk'], datasets: [{ data: [{{ single }}, {{ bulk }}], backgroundColor: ['#3b82f6', '#facc15'] }]}, options: { cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: true } } }});
-  </script>
+      // Type Donut Chart
+      const typeCtx = document.getElementById('typeChart');
+      if (typeCtx) {
+        new Chart(typeCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Single', 'Bulk'],
+            datasets: [{
+              data: [{{ single }}, {{ bulk }}],
+          backgroundColor: ['#3b82f6', '#facc15'],
+          borderWidth: 0
+        }]
+            },
+      options: {
+        cutout: '75%',
+          plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        }
+      }
+          });
+        }
+      });
+    </script>
+    <!--=================TERMINAL MODAL=================-->
+    <div class="modal fade" id="terminalModal" tabindex="-1" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="background: #0f172a; border: 1px solid #334155;">
+          <div class="modal-header border-bottom border-secondary">
+            <h5 class="modal-title font-monospace text-warning"><i class="bi bi-terminal-fill me-2"></i>Live Model
+              Training</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-0">
+            <div id="terminal-output" class="font-monospace p-3 text-start"
+              style="height: 400px; overflow-y: auto; background: #000; color: #0f0; font-size: 0.85rem;">
+              <span class="text-secondary"># Waiting for command...</span><br>
+            </div>
+          </div>
+          <div class="modal-footer border-top border-secondary justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <div class="spinner-border spinner-border-sm text-primary d-none" id="trainSpinner"></div>
+              <span class="text-white-50 small" id="trainStatus">Ready</span>
+            </div><button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>function openTerminal() {
+        var myModal = new bootstrap.Modal(document.getElementById('terminalModal'));
+        myModal.show();
 
-  {% endblock %}
+        const term = document.getElementById('terminal-output');
+        const spinner = document.getElementById('trainSpinner');
+        const status = document.getElementById('trainStatus');
+
+        term.innerHTML = '<span class="text-secondary"># Initializing training environment...</span><br>';
+        spinner.classList.remove('d-none');
+        status.innerText = "Training in progress...";
+
+        const evtSource = new EventSource("/admin/retrain_stream");
+
+        evtSource.onmessage = function (event) {
+          if (event.data === "DONE") {
+            evtSource.close();
+            spinner.classList.add('d-none');
+            status.innerText = "Training Complete";
+            term.innerHTML += '<br><span class="text-success"># Process finished successfully.</span><br>';
+            return;
+          }
+
+          term.innerHTML += '<span class="text-light">' + event.data + '</span><br>';
+          term.scrollTop = term.scrollHeight;
+        }
+
+          ;
+
+        evtSource.onerror = function (err) {
+          console.error("EventSource failed:", err);
+          evtSource.close();
+          spinner.classList.add('d-none');
+          status.innerText = "Connection Failed";
+          term.innerHTML += '<br><span class="text-danger"># Error: Connection lost.</span><br>';
+        }
+
+          ;
+      }
+
+    </script>
+    {% endblock %}

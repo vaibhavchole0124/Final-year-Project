@@ -1656,7 +1656,7 @@ def high_risk_employees():
 @app.route("/admin/dashboard")
 @admin_required
 def admin_dashboard():
-    conn = sqlite3.connect("users.db")
+    conn = get_db()
     cur = get_cursor(conn)
 
     # ---------------- SUMMARY CARDS ----------------
@@ -2447,6 +2447,220 @@ def convert_to_python_types(obj):
     else:
         return obj
 
+
+
+# -----------------------------------------------------------------------------
+#  SMART RETENTION ASSISTANT (GENAI)
+# -----------------------------------------------------------------------------
+@app.route("/retention_strategy")
+def retention_strategy():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+    
+    # In a real app, we would fetch from DB using ID.
+    # Here, we'll construct the object from query params or fail gracefully.
+    name = request.args.get("name", "John Doe")
+    risk = request.args.get("risk", "85")
+    dept = request.args.get("dept", "Sales")
+    role = request.args.get("role", "Sales Executive")
+    
+    # Simple logic to guess top factor if not provided
+    # (In production this comes from SHAP or the model)
+    factor = request.args.get("factor", "Low Monthly Income")
+    
+    employee = {
+        "Name": name,
+        "RiskScore": risk,
+        "Department": dept,
+        "JobRole": role,
+        "TopRiskFactor": factor,
+        "YearsAtCompany": request.args.get("tenure", "5"),
+        "PercentSalaryHike": request.args.get("hike", "12")
+    }
+    
+    return render_template("retention_strategy.html", employee=employee)
+
+
+@app.route("/api/generate_strategy", methods=["POST"])
+def generate_strategy():
+    try:
+        data = request.json
+        req_type = data.get("type") # 'plan' or 'email'
+        emp = data.get("employee", {})
+        
+        name = emp.get("Name", "Employee")
+        factor = emp.get("TopRiskFactor", "General Risk")
+        role = emp.get("JobRole", "Employee")
+        
+        # SIMULATED GENAI LOGIC
+        if req_type == "plan":
+            # Dynamic plan based on factor
+            plan = []
+            
+            if "Income" in factor or "Salary" in factor:
+                plan = [
+                    {"title": "Compensation Review", "description": f"Schedule a salary benchmarking session for {role} role."},
+                    {"title": "Performance Bonus", "description": "Offer a one-time retention bonus linked to upcoming deliverables."},
+                    {"title": "Financial Planning Workshop", "description": "Enroll in corporate financial wellness program."}
+                ]
+            elif "OverTime" in factor:
+                plan = [
+                    {"title": "Workload Balancing", "description": "Audit current project distribution and reassign tasks."},
+                    {"title": "Mandatory Time-Off", "description": "Enforce a 3-day weekend to prevent immediate burnout."},
+                    {"title": "Resource Augmentation", "description": "Hire an intern or junior associate to assist."}
+                ]
+            else:
+                # Generic
+                plan = [
+                    {"title": "1-on-1 Career Discussion", "description": "Discuss long-term career path and aspirations."},
+                    {"title": "Upskilling Opportunity", "description": "Sponsor a certification course relevant to their role."},
+                    {"title": "Flexible Work Arrangement", "description": "Offer 2 days remote work per week."}
+                ]
+                
+            return jsonify({"plan": plan})
+            
+        elif req_type == "email":
+            # Dynamic email template
+            subject = f"Confidential: Let's discuss your future at the company"
+            
+            body = f"Dear {name},\n\n"
+            body += "I hope you’re having a good week.\n\n"
+            body += f"I’ve been reviewing our team's progress, and I wanted to personally reach out to acknowledge the significant contributions you've made as a {role}.\n\n"
+            
+            if "Income" in factor:
+                body += "I understand that we haven't had a formal compensation review recently, and I want to ensure you feel valued here. I'd like to schedule a time to discuss your package and our upcoming salary revision cycle.\n\n"
+            elif "OverTime" in factor:
+                body += "I've noticed the extra hours you've been putting in lately. While I appreciate the dedication, I'm concerned about your work-life balance. Let's chat about how we can adjust the workload to make it more sustainable.\n\n"
+            else:
+                body += "I want to make sure you feel supported in your career growth here. Let's set up a time to discuss where you see yourself in the next year and how we can help you get there.\n\n"
+                
+            body += "Please let me know a time that works for you.\n\nBest regards,\n[Manager Name]"
+            
+            return jsonify({"email": {"subject": subject, "body": body}})
+            
+        return jsonify({"error": "Invalid type"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+import subprocess
+from flask import Response
+
+@app.route("/admin/retrain_stream")
+def retrain_stream():
+    if not session.get("logged_in"):
+        return "Unauthorized", 401
+
+    def generate():
+        try:
+            # Run the training script from the root directory
+            # We assume app.py is run from root, so retrain script is in current dir
+            cmd = ["python", "retrain_augmented_model.py"]
+            
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
+            
+            for line in process.stdout:
+                # Format for SSE
+                yield f"data: {line.strip()}\n\n"
+                
+            process.wait()
+            
+            if process.returncode == 0:
+                yield "data: DONE\n\n"
+            else:
+                yield f"data: Error: Process exited with code {process.returncode}\n\n"
+                
+        except Exception as e:
+            yield f"data: Critical Error: {str(e)}\n\n"
+
+    return Response(generate(), mimetype='text/event-stream')
+
+
+
+import matplotlib
+matplotlib.use('Agg') # Non-interactive backend
+import matplotlib.pyplot as plt
+import base64
+
+@app.route("/api/explain_prediction", methods=["POST"])
+def explain_prediction():
+    try:
+        data = request.json
+        # Convert input JSON to DataFrame (1 row)
+        # We need to reconstruct the preprocessing logic briefly
+        # ideally we reuse 'run_model' logic but extract the SHAP part
+        
+        # Quick hack: We need the model and preprocessor
+        # We'll assume the model is loaded as GLOBAL 'model' and 'preprocessor'
+        # If not, we load them
+        
+        # (For this snippet, I assume 'model' and 'preprocessor' are available globally 
+        # as seen in the rest of app.py)
+        
+        # Load model/preprocessor if not loaded (safety check)
+        # In a real app we rely on them being loaded at startup
+        
+        input_df = pd.DataFrame([data])
+        
+        # Preprocess
+        # Note: We must ensure columns match training expectation
+        # We might need to dummy-fill missing cols if input is partial
+        
+        # Transform
+        X_trans = preprocessor.transform(input_df)
+        
+        # SHAP
+        # We need the explainer. If not created, create it.
+        # global SHAP_EXPLAINER
+        # if SHAP_EXPLAINER is None: ... (Assuming it's ready)
+        
+        # Calculate shap values for this instance
+        # TreeExplainer for Random Forest
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X_trans)
+        
+        # For Binary Classification, shap_values is a list [class0, class1]
+        # We want class1 (Attrition=Yes)
+        vals = shap_values[1][0] 
+        base_val = explainer.expected_value[1]
+        
+        # Feature Names
+        # robust way to get feature names from preprocessor
+        try:
+            feature_names = get_preprocessor_output_columns(preprocessor)
+        except:
+            feature_names = [f"Feature {i}" for i in range(len(vals))]
+            
+        # Plot
+        fig = plt.figure(figsize=(8, 6))
+        shap.waterfall_plot(
+            shap.Explanation(values=vals, 
+                             base_values=base_val, 
+                             data=X_trans[0], 
+                             feature_names=feature_names),
+            show=False
+        )
+        
+        # Save to buffer
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", bbox_inches='tight', transparent=True)
+        buf.seek(0)
+        plot_data = base64.b64encode(buf.getvalue()).decode("utf-8")
+        plt.close(fig)
+        
+        return jsonify({"image": plot_data})
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 # -----------------------------------------------------------------------------
 # MAIN ENTRY POINT
